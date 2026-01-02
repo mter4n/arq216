@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ARQ216 — Architectural Structural Analysis | Syllabus</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --accent: #e85d04;
+            --accent-light: #f48c06;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-gold: #fbbf24;
+            --accent-emerald: #10b981;
+            --accent-seismic: #8b5cf6;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a2a;
+            --grid-line: rgba(232, 93, 4, 0.08);
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --accent: #c94d00;
+            --accent-light: #e85d04;
+            --accent-green: #16a34a;
+            --accent-blue: #2563eb;
+            --accent-purple: #9333ea;
+            --accent-cyan: #0891b2;
+            --accent-pink: #db2777;
+            --accent-yellow: #ca8a04;
+            --accent-red: #dc2626;
+            --accent-gold: #d97706;
+            --accent-emerald: #059669;
+            --accent-seismic: #7c3aed;
+            --text-primary: #1a1a1a;
+            --text-secondary: #525252;
+            --border: #e0e0e0;
+            --grid-line: rgba(232, 93, 4, 0.06);
+        }
+
+        body.light-mode .theme-toggle {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Theme Toggle - Mobile FAB */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        body:not(.light-mode) .theme-toggle .icon-sun { display: none; }
+        body.light-mode .theme-toggle .icon-moon { display: none; }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 32px 0;
+            border-bottom: 2px solid var(--accent);
+            background: linear-gradient(180deg, rgba(232, 93, 4, 0.08), transparent);
+        }
+
+        .course-code {
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-bottom: 16px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        h1 span {
+            display: block;
+            color: var(--accent);
+            font-size: 28px;
+            margin-top: 8px;
+        }
+
+        .header-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        /* Badges */
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .badge.tower {
+            background: rgba(232, 93, 4, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .badge.seismic {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid var(--accent-seismic);
+            color: var(--accent-seismic);
+        }
+
+        .badge.bim {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent-emerald);
+            color: var(--accent-emerald);
+        }
+
+        .badge.workshop {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* Course Meta Grid */
+        .course-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .meta-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .meta-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .meta-label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            margin: 0 -16px;
+            padding: 0 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tab-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-list {
+            display: flex;
+            gap: 4px;
+            padding: 12px 0;
+            min-width: max-content;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 10px 16px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'DM Sans', sans-serif;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .tab-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 24px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Module Cards */
+        .module-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .module-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .module-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .module-card.m1 .module-number {
+            background: rgba(232, 93, 4, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .module-card.m2 .module-number {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-seismic);
+            border: 1px solid var(--accent-seismic);
+        }
+
+        .module-card.m3 .module-number {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-emerald);
+            border: 1px solid var(--accent-emerald);
+        }
+
+        .module-title h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .module-title span {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .module-sessions {
+            padding: 12px 16px;
+        }
+
+        .session-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            margin: 4px 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .session-link:active {
+            border-color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        .session-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .session-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            min-width: 24px;
+        }
+
+        .session-name {
+            font-size: 14px;
+        }
+
+        .session-arrow {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .session-link.special {
+            border: 1px solid var(--accent-gold);
+            background: rgba(251, 191, 36, 0.08);
+        }
+
+        .session-link.special .session-name {
+            color: var(--accent-gold);
+        }
+
+        .session-link.lock {
+            border: 1px solid var(--accent-red);
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        .session-link.lock .session-name::after {
+            content: ' 🔒';
+        }
+
+        /* Overview Section */
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .overview-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .overview-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .overview-card ul {
+            margin-top: 12px;
+            padding-left: 20px;
+        }
+
+        .overview-card li {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        /* Learning Outcomes */
+        .outcome-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .outcome-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(232, 93, 4, 0.15);
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .outcome-text h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .outcome-text p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Evaluation Section */
+        .eval-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .eval-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .eval-percent {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--accent);
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .eval-percent span {
+            font-size: 16px;
+        }
+
+        .eval-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .eval-info p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Grade Scale */
+        .grade-scale {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .grade-scale h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .grade-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .grade-row:last-child {
+            border-bottom: none;
+        }
+
+        .grade-letter {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Resources Section */
+        .resource-category {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .resource-header {
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .resource-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+
+        .resource-item h5 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .resource-item p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .resource-item a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(232, 93, 4, 0.12), rgba(251, 191, 36, 0.08));
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-box.seismic {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.08));
+            border-color: var(--accent-seismic);
+        }
+
+        .highlight-box.emerald {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.08));
+            border-color: var(--accent-emerald);
+        }
+
+        .highlight-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .highlight-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Instructor Card */
+        .instructor-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .instructor-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .instructor-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .instructor-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            padding: 24px 16px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        footer p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        /* Bottom Safe Area */
+        .bottom-safe {
+            height: 80px;
+        }
+
+        /* Quick Stats Banner */
+        .stats-banner {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 16px 0;
+            margin: 0 -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .stats-banner::-webkit-scrollbar {
+            display: none;
+        }
+
+        .stat-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 12px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-chip .value {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Accordion for Mobile */
+        .accordion-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-align: left;
+        }
+
+        .accordion-trigger .icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-trigger .icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            max-height: 1000px;
+        }
+
+        .accordion-inner {
+            padding: 0 16px 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Policy Cards */
+        .policy-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .policy-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .policy-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .policy-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-content.active {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon-moon">🌙</span>
+        <span class="icon-sun">☀️</span>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="course-code">ARQ216</div>
+            <h1>Architectural<span>Structural Analysis</span></h1>
+            <p class="header-desc">
+                A hands-on course combining structural theory with competitions. Build towers, survive earthquakes, 
+                and create professional BIM models while learning how buildings stand up.
+            </p>
+            
+            
+            <div class="badges">
+                <span class="badge tower">🏗️ Tower Olympiad</span>
+                <span class="badge seismic">🌋 Earthquake Challenge</span>
+                <span class="badge bim">🖥️ BIM Integration</span>
+                <span class="badge workshop">🔧 Hands-On</span>
+            </div>
+
+            <div class="course-meta">
+                <div class="meta-item">
+                    <div class="meta-value">6</div>
+                    <div class="meta-label">Credits</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-value">16</div>
+                    <div class="meta-label">Sessions</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-value">4h</div>
+                    <div class="meta-label">Per Session</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-value">3</div>
+                    <div class="meta-label">Modules</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quick Stats Banner -->
+        <div class="stats-banner">
+            <div class="stat-chip"><span class="value">80%</span> Min. Attendance</div>
+            <div class="stat-chip"><span class="value">3</span> Team Projects</div>
+            <div class="stat-chip"><span class="value">2</span> Test Days</div>
+            <div class="stat-chip"><span class="value">Robot + Revit</span> Software</div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav">
+            <div class="tab-list">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="schedule">Schedule</button>
+                <button class="tab-btn" data-tab="evaluation">Evaluation</button>
+                <button class="tab-btn" data-tab="resources">Resources</button>
+                <button class="tab-btn" data-tab="policies">Policies</button>
+            </div>
+        </nav>
+
+        <main>
+
+            <!-- OVERVIEW TAB -->
+            <div id="overview" class="tab-content active">
+                <div class="section-header">
+                    <h2>Course Overview</h2>
+                    <p>Learn structures through building and testing</p>
+                </div>
+
+                <div class="overview-card">
+                    <h3>📚 What You'll Learn</h3>
+                    <p>
+                        This course bridges the gap between structural theory and hands-on practice. 
+                        You'll analyze load paths, calculate forces, and validate your understanding 
+                        by building and testing actual structures.
+                    </p>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>🏗️ Module 1: Tower Olympiad</h3>
+                    <p>
+                        Design, analyze, and build a popsicle stick tower. Test material properties, 
+                        model in Robot Structural Analysis, and predict failure loads before the 
+                        competition test.
+                    </p>
+                </div>
+
+                <div class="highlight-box seismic">
+                    <h3>🌋 Module 2: Earthquake Challenge</h3>
+                    <p>
+                        Build structures that survive earthquakes. Learn modal analysis, natural frequencies, 
+                        and seismic behavior. Test your design on the shake table.
+                    </p>
+                </div>
+
+                <div class="highlight-box emerald">
+                    <h3>🖥️ Module 3: BIM Integration</h3>
+                    <p>
+                        Create a complete structural model in Revit with Robot integration. 
+                        Professional documentation and final presentation.
+                    </p>
+                </div>
+
+                <div class="section-header" style="margin-top: 32px;">
+                    <h2>Learning Outcomes</h2>
+                    <p>By the end of this course, you will be able to:</p>
+                </div>
+
+                <div class="outcome-item">
+                    <div class="outcome-icon">⚖️</div>
+                    <div class="outcome-text">
+                        <h4>Analyze Load Paths</h4>
+                        <p>Trace how forces flow through structures from application point to foundation.</p>
+                    </div>
+                </div>
+
+                <div class="outcome-item">
+                    <div class="outcome-icon">🔢</div>
+                    <div class="outcome-text">
+                        <h4>Calculate Structural Forces</h4>
+                        <p>Perform equilibrium analysis and determine internal member forces.</p>
+                    </div>
+                </div>
+
+                <div class="outcome-item">
+                    <div class="outcome-icon">🖥️</div>
+                    <div class="outcome-text">
+                        <h4>Use Professional Software</h4>
+                        <p>Model and analyze structures in Robot Structural Analysis and Revit.</p>
+                    </div>
+                </div>
+
+                <div class="outcome-item">
+                    <div class="outcome-icon">🌊</div>
+                    <div class="outcome-text">
+                        <h4>Understand Seismic Behavior</h4>
+                        <p>Apply concepts of natural frequency, resonance, and dynamic response.</p>
+                    </div>
+                </div>
+
+                <div class="outcome-item">
+                    <div class="outcome-icon">🔗</div>
+                    <div class="outcome-text">
+                        <h4>Integrate BIM Workflows</h4>
+                        <p>Connect structural analysis with building information modeling.</p>
+                    </div>
+                </div>
+
+                <div class="instructor-card">
+                    <div class="instructor-avatar">👨‍🏫</div>
+                    <div class="instructor-info">
+                        <h4>Prof. Dr. Miguel Terán</h4>
+                        <p>Universidad Iberoamericana Tijuana<br>Primavera 2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCHEDULE TAB -->
+            <div id="schedule" class="tab-content">
+                <div class="section-header">
+                    <h2>Session Schedule</h2>
+                    <p>16 sessions across 3 modules</p>
+                </div>
+
+                <!-- Module 1 -->
+                <div class="module-card m1">
+                    <div class="module-header">
+                        <div class="module-number">1</div>
+                        <div class="module-title">
+                            <h3>Tower Olympiad</h3>
+                            <span>Sessions 01–05 • Static Analysis</span>
+                        </div>
+                    </div>
+                    <div class="module-sessions">
+                        <a href="session01.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">01</span>
+                                <span class="session-name">Challenge Launch & Team Formation</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session02.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">02</span>
+                                <span class="session-name">Loads & Material Testing</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session03.html" class="session-link lock">
+                            <div class="session-info">
+                                <span class="session-num">03</span>
+                                <span class="session-name">Robot Modeling & Prediction Lock</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session04.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">04</span>
+                                <span class="session-name">Build Day</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session05.html" class="session-link special">
+                            <div class="session-info">
+                                <span class="session-num">05</span>
+                                <span class="session-name">🏆 Olympiad Day — Competition Test</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Module 2 -->
+                <div class="module-card m2">
+                    <div class="module-header">
+                        <div class="module-number">2</div>
+                        <div class="module-title">
+                            <h3>Earthquake Challenge</h3>
+                            <span>Sessions 06–10 • Dynamic Analysis</span>
+                        </div>
+                    </div>
+                    <div class="module-sessions">
+                        <a href="session06.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">06</span>
+                                <span class="session-name">Seismic Theory & Challenge Launch</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session07.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">07</span>
+                                <span class="session-name">Robot Seismic Modeling</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session08.html" class="session-link lock">
+                            <div class="session-info">
+                                <span class="session-num">08</span>
+                                <span class="session-name">Modal Analysis & Prediction Lock</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session09.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">09</span>
+                                <span class="session-name">Build Day</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session10.html" class="session-link special">
+                            <div class="session-info">
+                                <span class="session-num">10</span>
+                                <span class="session-name">🌋 Earthquake Day — Shake Table Test</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Module 3 -->
+                <div class="module-card m3">
+                    <div class="module-header">
+                        <div class="module-number">3</div>
+                        <div class="module-title">
+                            <h3>BIM Integration</h3>
+                            <span>Sessions 11–16 • Professional Practice</span>
+                        </div>
+                    </div>
+                    <div class="module-sessions">
+                        <a href="session11.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">11</span>
+                                <span class="session-name">Project Launch & Revit Basics</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session12.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">12</span>
+                                <span class="session-name">Structural Modeling in Revit</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session13.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">13</span>
+                                <span class="session-name">Robot Analysis Integration</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session14.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">14</span>
+                                <span class="session-name">Documentation & Detailing</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session15.html" class="session-link">
+                            <div class="session-info">
+                                <span class="session-num">15</span>
+                                <span class="session-name">Assembly Day</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                        <a href="session16.html" class="session-link special">
+                            <div class="session-info">
+                                <span class="session-num">16</span>
+                                <span class="session-name">🎓 Final Presentation</span>
+                            </div>
+                            <span class="session-arrow">→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVALUATION TAB -->
+            <div id="evaluation" class="tab-content">
+                <div class="section-header">
+                    <h2>Evaluation Criteria</h2>
+                    <p>How your work is assessed</p>
+                </div>
+
+                <div class="eval-grid">
+                    <div class="eval-card">
+                        <div class="eval-percent">30<span>%</span></div>
+                        <div class="eval-info">
+                            <h4>Tower Olympiad</h4>
+                            <p>Design, analysis, construction quality, and prediction accuracy. Team performance in competition.</p>
+                        </div>
+                    </div>
+                    <div class="eval-card">
+                        <div class="eval-percent">30<span>%</span></div>
+                        <div class="eval-info">
+                            <h4>Earthquake Challenge</h4>
+                            <p>Seismic design, modal analysis, shake table survival, and frequency prediction.</p>
+                        </div>
+                    </div>
+                    <div class="eval-card">
+                        <div class="eval-percent">25<span>%</span></div>
+                        <div class="eval-info">
+                            <h4>BIM Project</h4>
+                            <p>Revit model quality, Robot integration, documentation, and final presentation.</p>
+                        </div>
+                    </div>
+                    <div class="eval-card">
+                        <div class="eval-percent">15<span>%</span></div>
+                        <div class="eval-info">
+                            <h4>Participation</h4>
+                            <p>Attendance, teamwork, in-class exercises, and professional conduct.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box" style="margin-top: 24px;">
+                    <h3>🎯 Prediction Accuracy Bonus</h3>
+                    <p>
+                        Teams that accurately predict their tower's failure load or building's natural frequency 
+                        within 10% earn bonus points. This rewards understanding over guessing.
+                    </p>
+                </div>
+
+                <!-- <div class="grade-scale">
+                    <h4>📊 Grade Scale</h4>
+                    <div class="grade-row">
+                        <span class="grade-letter">A</span>
+                        <span>90 – 100%</span>
+                    </div>
+                    <div class="grade-row">
+                        <span class="grade-letter">B</span>
+                        <span>80 – 89%</span>
+                    </div>
+                    <div class="grade-row">
+                        <span class="grade-letter">C</span>
+                        <span>70 – 79%</span>
+                    </div>
+                    <div class="grade-row">
+                        <span class="grade-letter">D</span>
+                        <span>60 – 69%</span>
+                    </div>
+                    <div class="grade-row">
+                        <span class="grade-letter">F</span>
+                        <span>Below 60%</span>
+                    </div>
+                </div> -->
+
+                <div class="section-header" style="margin-top: 32px;">
+                    <h2>Module Breakdown</h2>
+                    <p>What's evaluated in each module</p>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                        <span>🏗️ Module 1: Tower Olympiad Rubric</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner">
+                            <strong>Robot Model (25%)</strong> — Accurate geometry, proper supports, correct material properties<br><br>
+                            <strong>Analysis Report (25%)</strong> — Load calculations, stress diagrams, failure mode prediction<br><br>
+                            <strong>Construction (25%)</strong> — Build quality, connection integrity, dimensional accuracy<br><br>
+                            <strong>Competition (25%)</strong> — Structural efficiency ratio (load held ÷ tower weight)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                        <span>🌋 Module 2: Earthquake Challenge Rubric</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner">
+                            <strong>Modal Analysis (30%)</strong> — Correct mode shapes, frequency calculations<br><br>
+                            <strong>Design Strategy (25%)</strong> — Seismic detailing, bracing system, connection design<br><br>
+                            <strong>Construction (20%)</strong> — Build quality, rigid diaphragms, lateral system<br><br>
+                            <strong>Shake Table (25%)</strong> — Survival through test levels, frequency prediction accuracy
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                        <span>🖥️ Module 3: BIM Project Rubric</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner">
+                            <strong>Revit Model (30%)</strong> — Complete structural system, families, detailing<br><br>
+                            <strong>Robot Integration (25%)</strong> — Analysis results, design checks, optimization<br><br>
+                            <strong>Documentation (25%)</strong> — Sheets, schedules, annotations, professional quality<br><br>
+                            <strong>Presentation (20%)</strong> — Clear communication, Q&A response, team coordination
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESOURCES TAB -->
+            <div id="resources" class="tab-content">
+                <div class="section-header">
+                    <h2>Course Resources</h2>
+                    <p>Textbooks, software, and references</p>
+                </div>
+
+                <div class="resource-category">
+                    <div class="resource-header">📚 Primary Textbooks</div>
+                    <div class="resource-item">
+                        <h5>Structural Analysis, 10th Edition</h5>
+                        <p>Hibbeler, R.C. — Pearson, 2018 — ISBN: 978-0134610672</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>Structural Analysis, 6th Edition</h5>
+                        <p>Kassimali, Aslam — Cengage Learning, 2020 — ISBN: 978-1337630931</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>Statics and Strength of Materials for Architecture</h5>
+                        <p>Onouye & Kane — Pearson, 4th Ed. — ISBN: 978-0135079256</p>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <div class="resource-header">🌍 Earthquake Engineering</div>
+                    <div class="resource-item">
+                        <h5>Dynamics of Structures, 6th Edition</h5>
+                        <p>Chopra, Anil K. — Pearson, 2023 — ISBN: 978-0137602520</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>Earthquake Engineering: From Seismology to PBD</h5>
+                        <p>Fardis, Michael N. et al. — Springer, 2015</p>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <div class="resource-header">🏛️ Architecture & Structures</div>
+                    <div class="resource-item">
+                        <h5>Why Buildings Stand Up</h5>
+                        <p>Salvadori, Mario — W.W. Norton, 2002</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>Why Buildings Fall Down</h5>
+                        <p>Levy & Salvadori — W.W. Norton, 2002</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>Structure As Architecture</h5>
+                        <p>Charleson, Andrew W. — Routledge, 2014</p>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <div class="resource-header">💻 Software (University License)</div>
+                    <div class="resource-item">
+                        <h5>Autodesk Robot Structural Analysis</h5>
+                        <p>Primary analysis tool — All modules</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>Autodesk Revit</h5>
+                        <p>BIM modeling — Module 3</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>AutoCAD</h5>
+                        <p>Professional documentation</p>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <div class="resource-header">📋 International Standards</div>
+                    <div class="resource-item">
+                        <h5>ASCE/SEI 7-22</h5>
+                        <p>Minimum Design Loads — ASCE, 2022</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>IBC 2024</h5>
+                        <p>International Building Code — ICC, 2024</p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>Eurocode 8</h5>
+                        <p>Design for Earthquake Resistance — CEN</p>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <div class="resource-header">🌐 Online Resources</div>
+                    <div class="resource-item">
+                        <h5>Autodesk Learning</h5>
+                        <p><a href="https://www.autodesk.com/learn" target="_blank">autodesk.com/learn</a></p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>FEMA Earthquake Resources</h5>
+                        <p><a href="https://www.fema.gov/emergency-managers/risk-management/earthquake" target="_blank">fema.gov/earthquake</a></p>
+                    </div>
+                    <div class="resource-item">
+                        <h5>USGS Earthquake Hazards</h5>
+                        <p><a href="https://www.usgs.gov/programs/earthquake-hazards" target="_blank">usgs.gov/earthquake-hazards</a></p>
+                    </div>
+                </div>
+
+                <div class="highlight-box emerald" style="margin-top: 24px;">
+                    <h3>📖 Recommended Reading Order</h3>
+                    <p>
+                        Start with Salvadori's "Why Buildings Stand Up" for intuition. Then Onouye & Kane 
+                        for architecture-focused theory. Use Hibbeler for detailed analysis methods. 
+                        Reference Chopra for seismic topics.
+                    </p>
+                </div>
+            </div>
+
+            <!-- POLICIES TAB -->
+            <div id="policies" class="tab-content">
+                <div class="section-header">
+                    <h2>Course Policies</h2>
+                    <p>Attendance, conduct, and requirements</p>
+                </div>
+
+                <div class="policy-grid">
+                    <div class="policy-card">
+                        <h4>📅 Attendance</h4>
+                        <p>
+                            Minimum 80% attendance required (13 of 16 sessions). Since all learning happens 
+                            in class — theory, exercises, and software practice — attendance is essential.
+                        </p>
+                    </div>
+
+                    <div class="policy-card">
+                        <h4>👥 Team Work</h4>
+                        <p>
+                            Teams of 3–4 students for all modules. Form your own team or be assigned. 
+                            All members share the grade, so choose wisely and communicate clearly.
+                        </p>
+                    </div>
+
+                    <div class="policy-card">
+                        <h4>💻 Equipment</h4>
+                        <p>
+                            Bring your laptop with Robot, Revit, and AutoCAD installed (university license). 
+                            Scientific calculator required. Engineering notebook recommended.
+                        </p>
+                    </div>
+
+                    <div class="policy-card">
+                        <h4>⏰ Late Work</h4>
+                        <p>
+                            Prediction locks are absolute — no late submissions. Other deliverables: 
+                            -10% per day late, maximum 3 days.
+                        </p>
+                    </div>
+
+                    <div class="policy-card">
+                        <h4>🔒 Academic Integrity</h4>
+                        <p>
+                            Your analysis must be your own work. Collaboration is encouraged for building, 
+                            but Robot models and calculations must be original. Cite all references.
+                        </p>
+                    </div>
+
+                    <div class="policy-card">
+                        <h4>🛡️ Safety</h4>
+                        <p>
+                            Safety glasses required during testing. Follow all lab protocols. 
+                            Report any equipment issues immediately.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="highlight-box" style="margin-top: 24px;">
+                    <h3>🎯 The Prediction Lock Rule</h3>
+                    <p>
+                        Before each test day, teams must submit their predicted failure load or natural frequency. 
+                        Once locked, predictions cannot be changed. This tests your understanding — 
+                        you can't optimize after seeing results.
+                    </p>
+                </div>
+
+                <div class="instructor-card" style="margin-top: 24px;">
+                    <div class="instructor-avatar">📧</div>
+                    <div class="instructor-info">
+                        <h4>Questions?</h4>
+                        <p>Office hours by appointment<br>Email response within 48 hours</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-safe"></div>
+        </main>
+
+        <footer>
+            <div class="footer-logo">ARQ216</div>
+            <p>
+                Architectural Structural Analysis<br>
+                Universidad Iberoamericana Tijuana<br>
+                Primavera 2026
+            </p>
+            <p style="margin-top: 12px; font-size: 10px;">© All rights reserved. Prof. Miguel Terán</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) {
+                metaTheme.setAttribute('content', isLight ? '#f5f5f5' : '#0a0a0a');
+            }
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) {
+                    metaTheme.setAttribute('content', '#f5f5f5');
+                }
+            }
+        })();
+
+        // Tab Navigation
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.tab;
+                
+                // Update buttons
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === targetId) {
+                        content.classList.add('active');
+                    }
+                });
+
+                // Scroll to top of content
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Accordion Toggle
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const wasOpen = item.classList.contains('open');
+            
+            // Close all accordions
+            document.querySelectorAll('.accordion-item').forEach(i => {
+                i.classList.remove('open');
+            });
+            
+            // Toggle clicked one
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        // Prevent double-tap zoom on interactive elements
+        document.querySelectorAll('button, a, .tab-btn, .session-link').forEach(el => {
+            el.addEventListener('touchend', e => {
+                if (el.tagName === 'A' && el.href) return; // Let links work normally
+                e.preventDefault();
+                el.click();
+            });
+        });
+    </script>
+</body>
+</html>

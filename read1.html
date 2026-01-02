@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0d0d0d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>What is Structure? | ARQ216 Micro-Lesson</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --bg-card: #161616;
+            --bg-elevated: #1a1a1a;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --accent: #ff6b35;
+            --accent-glow: rgba(255, 107, 53, 0.3);
+            --accent-soft: rgba(255, 107, 53, 0.15);
+            --border: #2a2a2a;
+            --slab: #3b82f6;
+            --beam: #22c55e;
+            --column: #a855f7;
+            --wall: #f59e0b;
+            --foundation: #6b7280;
+            --quote-bg: #1a1a1a;
+            --nature: #10b981;
+        }
+
+        body.light-mode {
+            --bg: #fafafa;
+            --bg-card: #ffffff;
+            --bg-elevated: #f5f5f5;
+            --text: #1a1a1a;
+            --text-muted: #666;
+            --accent: #e85d04;
+            --accent-glow: rgba(232, 93, 4, 0.2);
+            --accent-soft: rgba(232, 93, 4, 0.1);
+            --border: #e5e5e5;
+            --quote-bg: #f0f0f0;
+            --nature: #059669;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            width: 0%;
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:active { transform: scale(0.95); }
+        body:not(.light-mode) .icon-sun { display: none; }
+        body.light-mode .icon-moon { display: none; }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:active { border-color: var(--accent); color: var(--text); }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 20px 60px;
+            position: relative;
+        }
+
+        .lesson-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(42px, 11vw, 64px);
+            font-weight: 400;
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .hero-subtitle {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 340px;
+            line-height: 1.7;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 1px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* Sections */
+        .section {
+            padding: 50px 20px;
+            border-top: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--border);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .section h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 26px;
+            font-weight: 400;
+            margin-bottom: 14px;
+        }
+
+        .section p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .section p.lead {
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        /* Quote Block */
+        .quote-block {
+            background: var(--quote-bg);
+            border-left: 4px solid var(--accent);
+            padding: 18px 18px 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+            position: relative;
+        }
+
+        .quote-block.nature {
+            border-left-color: var(--nature);
+        }
+
+        .quote-block p {
+            font-family: 'Instrument Serif', serif;
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .quote-block cite {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-style: normal;
+            letter-spacing: 0.5px;
+        }
+
+        /* Definition Card */
+        .definition-card {
+            background: var(--bg-card);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .definition-card .label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .definition-card p {
+            font-family: 'Instrument Serif', serif;
+            font-size: 19px;
+            color: var(--text);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Nature Grid */
+        .nature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 24px 0;
+        }
+
+        .nature-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 10px;
+            text-align: center;
+        }
+
+        .nature-item .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .nature-item .name {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        /* Diagram Card */
+        .diagram-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .diagram-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .tent-diagram {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 16px;
+        }
+
+        .tent-part { text-align: center; }
+        .tent-icon { font-size: 40px; margin-bottom: 6px; }
+        .tent-label { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+        .tent-desc { font-size: 10px; color: var(--text-muted); }
+
+        .diagram-equation {
+            text-align: center;
+            padding: 14px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .diagram-equation strong { color: var(--accent); }
+
+        /* Interactive Building */
+        .building-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .building-visual {
+            position: relative;
+            height: 260px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .building-structure {
+            position: relative;
+            width: 160px;
+            height: 230px;
+        }
+
+        .struct-element {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .struct-element:hover, .struct-element.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .el-foundation { bottom: 0; left: 0; width: 100%; height: 22px; background: var(--foundation); }
+        .el-column { width: 14px; background: var(--column); }
+        .el-column.c1 { bottom: 22px; left: 10px; height: 80px; }
+        .el-column.c2 { bottom: 22px; right: 10px; height: 80px; }
+        .el-column.c3 { bottom: 112px; left: 10px; height: 70px; }
+        .el-column.c4 { bottom: 112px; right: 10px; height: 70px; }
+        .el-beam { height: 12px; background: var(--beam); }
+        .el-beam.b1 { bottom: 102px; left: 10px; width: 140px; }
+        .el-beam.b2 { bottom: 182px; left: 10px; width: 140px; }
+        .el-slab { height: 8px; background: var(--slab); }
+        .el-slab.s1 { bottom: 114px; left: 0; width: 160px; }
+        .el-slab.s2 { bottom: 194px; left: 0; width: 160px; }
+        .el-wall { width: 5px; height: 60px; background: var(--wall); }
+        .el-wall.w1 { bottom: 120px; left: 77px; }
+
+        .element-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .legend-item.active { border-color: var(--accent); }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .legend-dot.slab { background: var(--slab); }
+        .legend-dot.beam { background: var(--beam); }
+        .legend-dot.column { background: var(--column); }
+        .legend-dot.wall { background: var(--wall); }
+        .legend-dot.foundation { background: var(--foundation); }
+
+        .legend-text { font-size: 11px; font-weight: 500; }
+
+        .element-info {
+            margin-top: 12px;
+            padding: 14px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+            display: none;
+        }
+
+        .element-info.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .element-info h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+        .element-info p { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+        /* Key Point */
+        .key-point {
+            background: linear-gradient(135deg, var(--accent), #ff8f65);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 24px 0;
+            color: #fff;
+        }
+
+        .key-point h3 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .key-point p {
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* History Card */
+        .history-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .history-card-header {
+            background: var(--accent-soft);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .history-card-header span {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .history-card-body { padding: 16px; }
+
+        .history-date {
+            display: inline-block;
+            background: var(--bg-elevated);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .history-card h4 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .history-card p { margin-bottom: 0; font-size: 13px; }
+
+        /* Quiz */
+        .quiz-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .quiz-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+
+        .quiz-option {
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text);
+        }
+
+        .quiz-option:active { transform: scale(0.98); }
+        .quiz-option.correct { border-color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+        .quiz-option.incorrect { border-color: #ef4444; background: rgba(239, 68, 68, 0.15); }
+
+        .quiz-feedback {
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .quiz-feedback.show { display: block; animation: fadeIn 0.3s ease; }
+        .quiz-feedback.correct { background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; color: #22c55e; }
+        .quiz-feedback.incorrect { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; }
+
+        /* Sources */
+        .sources-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .sources-section h4 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .source-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .source-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .source-item:first-of-type { padding-top: 0; }
+
+        .source-icon { font-size: 24px; flex-shrink: 0; }
+
+        .source-info h5 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .source-info p { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+        /* CTA */
+        .cta-section {
+            padding: 50px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .cta-section h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .cta-section p { color: var(--text-muted); margin-bottom: 20px; font-size: 14px; }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--accent);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:active { transform: scale(0.97); }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        footer p { font-size: 11px; color: var(--text-muted); }
+
+        .bottom-safe { height: 50px; }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <a href="session01.html" class="back-link">
+        <span>←</span>
+        <span>Session 01</span>
+    </a>
+
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon-moon">🌙</span>
+        <span class="icon-sun">☀️</span>
+    </button>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="lesson-tag">
+            <span>📐</span>
+            <span>10 min read</span>
+        </div>
+        <h1>What is<br><span>Structure?</span></h1>
+        <p class="hero-subtitle">
+            The most strength from the least material — why your tower must learn from nature.
+        </p>
+        <div class="scroll-hint">
+            <span>Scroll to begin</span>
+            <span>↓</span>
+        </div>
+    </section>
+
+    <!-- Section 1: Definition -->
+    <section class="section" id="section1">
+        <div class="section-number">01</div>
+        <h2>Defining Structure</h2>
+        
+        <div class="definition-card">
+            <div class="label">Definition</div>
+            <p>Structure is something made up of interdependent parts in a definite pattern of organization — achieving the most strength from the least material.</p>
+        </div>
+
+        <p>
+            This definition comes from Onouye & Kane, but notice the key insight: structure isn't just about 
+            holding things up. It's about <strong>efficiency</strong> — maximum strength, minimum material.
+        </p>
+
+        <div class="quote-block">
+            <p>The primary function of a building structure is to support and redirect loads and forces 
+            safely to the ground. Building structures are constantly withstanding the forces of wind, 
+            the effects of gravity, vibrations, and sometimes even earthquakes.</p>
+            <cite>— Onouye & Kane, "Statics and Strength of Materials" (2012), p. 1</cite>
+        </div>
+
+        <p>
+            Salvadori takes a different approach — he separates <strong>function</strong> (what a building does) 
+            from <strong>structure</strong> (what holds it up):
+        </p>
+
+        <div class="quote-block">
+            <p>The structural components of a building assure that the elements required to fulfill its 
+            function will stand up. Columns, beams, and floors — structure — make possible the 
+            architectural function.</p>
+            <cite>— Salvadori, "Why Buildings Stand Up" (1980), p. 19</cite>
+        </div>
+
+        <div class="diagram-card">
+            <div class="diagram-title">The Tent Analogy</div>
+            <div class="tent-diagram">
+                <div class="tent-part">
+                    <div class="tent-icon">🎪</div>
+                    <div class="tent-label">Animal Skins</div>
+                    <div class="tent-desc">Creates space<br>(Function)</div>
+                </div>
+                <div class="tent-part">
+                    <div class="tent-icon">📍</div>
+                    <div class="tent-label">Poles & Ropes</div>
+                    <div class="tent-desc">Holds it up<br>(Structure)</div>
+                </div>
+            </div>
+            <div class="diagram-equation">
+                <strong>Skin</strong> (function) + <strong>Skeleton</strong> (structure) = Building
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Nature's Lessons -->
+    <section class="section" id="section2">
+        <div class="section-number">02</div>
+        <h2>Nature's Lessons</h2>
+        <p class="lead">
+            The best structures aren't invented — they're discovered by observing nature.
+        </p>
+
+        <div class="quote-block nature">
+            <p>Nature does nothing in vain, and more is in vain when less will serve; 
+            for Nature is pleased with simplicity, and affects not the pomp of superfluous causes.</p>
+            <cite>— Sir Isaac Newton, Principia (quoted in Onouye & Kane, p. 1)</cite>
+        </div>
+
+        <p>
+            Look around: every natural form is a structural lesson. A spider web, a seashell, 
+            the human skeleton — each achieves incredible strength with minimal material.
+        </p>
+
+        <div class="nature-grid">
+            <div class="nature-item">
+                <div class="icon">🕸️</div>
+                <div class="name">Spider Web</div>
+            </div>
+            <div class="nature-item">
+                <div class="icon">🐚</div>
+                <div class="name">Seashell</div>
+            </div>
+            <div class="nature-item">
+                <div class="icon">🦴</div>
+                <div class="name">Bone</div>
+            </div>
+            <div class="nature-item">
+                <div class="icon">🌳</div>
+                <div class="name">Tree</div>
+            </div>
+            <div class="nature-item">
+                <div class="icon">🍯</div>
+                <div class="name">Honeycomb</div>
+            </div>
+            <div class="nature-item">
+                <div class="icon">🥚</div>
+                <div class="name">Eggshell</div>
+            </div>
+        </div>
+
+        <div class="quote-block nature">
+            <p>The form of an object is a diagram of forces; in this sense, at least, 
+            that from it we can judge of or deduce the forces that are acting or have acted upon it.</p>
+            <cite>— D'Arcy Thompson, "On Growth and Form" (quoted in Onouye & Kane, p. 3)</cite>
+        </div>
+
+        <p>
+            This is profound: <strong>form reveals forces</strong>. When you look at a tree trunk 
+            thicker at the base, you're seeing the accumulated weight it must carry. When you see 
+            a bone hollow in the middle, you're seeing where material isn't needed.
+        </p>
+
+        <div class="key-point">
+            <h3>🎯 For Your Tower</h3>
+            <p>Your popsicle stick tower should look like it's resisting forces — because it is. 
+            If a member isn't carrying load, remove it. Nature wastes nothing.</p>
+        </div>
+    </section>
+
+    <!-- Section 3: Intuition & Trial -->
+    <section class="section" id="section3">
+        <div class="section-number">03</div>
+        <h2>Intuition Over Equations</h2>
+        <p class="lead">
+            Good structural design comes from intuition first, mathematics second.
+        </p>
+
+        <div class="quote-block">
+            <p>Good structural design is more related to correct intuitive sense than to sets of 
+            complex mathematical equations. Mathematics should be merely a convenient and validating 
+            tool by which the designer determines the physical sizes and proportions.</p>
+            <cite>— Onouye & Kane, p. 2</cite>
+        </div>
+
+        <p>
+            Both sources agree: you already understand structure intuitively. Salvadori explains 
+            that ancient builders had no theory — just physical intuition developed through experience.
+        </p>
+
+        <div class="quote-block">
+            <p>Structures, even large and daring structures, were built in the past by craftsmen 
+            who had no theoretical knowledge and moved on a purely physical intuition of structural 
+            principles. We all possess these intuitions through our daily experience.</p>
+            <cite>— Salvadori, p. 25</cite>
+        </div>
+
+        <p>
+            How did they learn the limits? Through failure.
+        </p>
+
+        <div class="history-card">
+            <div class="history-card-header">
+                <span>📜 Learning from Collapse</span>
+            </div>
+            <div class="history-card-body">
+                <span class="history-date">537 AD → Rebuilt Twice</span>
+                <h4>Hagia Sophia</h4>
+                <p>"The daring brick dome of Hagia Sophia fell twice before it finally stood. 
+                It stands to this day." — Salvadori, p. 19</p>
+            </div>
+        </div>
+
+        <div class="quote-block nature">
+            <p>Nature creates slowly through a process of trial and error. Living organisms 
+            respond to problems and a changing environment through adaptations over a long 
+            period of time. Those that do not respond appropriately to the environmental 
+            changes simply perish.</p>
+            <cite>— Onouye & Kane, p. 3</cite>
+        </div>
+
+        <p>
+            Both nature and human builders learn the same way: try, fail, adapt. Your Robot 
+            analysis replaces centuries of trial — but the principle remains.
+        </p>
+    </section>
+
+    <!-- Section 4: Five Elements -->
+    <section class="section" id="section4">
+        <div class="section-number">04</div>
+        <h2>Five Elements</h2>
+        <p class="lead">
+            Every building uses the same vocabulary. Tap each element to learn its role.
+        </p>
+
+        <div class="building-diagram">
+            <div class="building-visual">
+                <div class="building-structure">
+                    <div class="struct-element el-foundation" data-element="foundation"></div>
+                    <div class="struct-element el-column c1" data-element="column"></div>
+                    <div class="struct-element el-column c2" data-element="column"></div>
+                    <div class="struct-element el-column c3" data-element="column"></div>
+                    <div class="struct-element el-column c4" data-element="column"></div>
+                    <div class="struct-element el-beam b1" data-element="beam"></div>
+                    <div class="struct-element el-beam b2" data-element="beam"></div>
+                    <div class="struct-element el-slab s1" data-element="slab"></div>
+                    <div class="struct-element el-slab s2" data-element="slab"></div>
+                    <div class="struct-element el-wall w1" data-element="wall"></div>
+                </div>
+            </div>
+
+            <div class="element-legend">
+                <div class="legend-item" data-element="slab">
+                    <div class="legend-dot slab"></div>
+                    <span class="legend-text">Slab</span>
+                </div>
+                <div class="legend-item" data-element="beam">
+                    <div class="legend-dot beam"></div>
+                    <span class="legend-text">Beam</span>
+                </div>
+                <div class="legend-item" data-element="column">
+                    <div class="legend-dot column"></div>
+                    <span class="legend-text">Column</span>
+                </div>
+                <div class="legend-item" data-element="wall">
+                    <div class="legend-dot wall"></div>
+                    <span class="legend-text">Wall</span>
+                </div>
+                <div class="legend-item" data-element="foundation" style="grid-column: span 2;">
+                    <div class="legend-dot foundation"></div>
+                    <span class="legend-text">Foundation</span>
+                </div>
+            </div>
+
+            <div class="element-info" id="elementInfo">
+                <h4 id="infoTitle">Tap an element</h4>
+                <p id="infoDesc">Select a structural element to learn what it does.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Structure's Beauty -->
+    <section class="section" id="section5">
+        <div class="section-number">05</div>
+        <h2>Structure's Beauty</h2>
+        <p class="lead">
+            When structure is honest and efficient, beauty emerges naturally.
+        </p>
+
+        <div class="quote-block">
+            <p>The objective data of the problem, technology and statics, suggest the solutions and forms; 
+            the aesthetic sensitivity of the designer, who understands the intrinsic beauty and validity, 
+            welcomes the suggestion and models it, emphasizes it, proportions it.</p>
+            <cite>— Pier Luigi Nervi, "Aesthetics and Technology in Architecture" (quoted in Onouye & Kane, p. 3)</cite>
+        </div>
+
+        <p>
+            Salvadori tells of Nervi seeing the George Washington Bridge for the first time:
+        </p>
+
+        <div class="quote-block">
+            <p>To think that before it was built man had never seen such lovely curves!</p>
+            <cite>— Pier Luigi Nervi (quoted in Salvadori, p. 26)</cite>
+        </div>
+
+        <p>
+            The curves weren't designed to be beautiful — they emerged from the forces. 
+            A correct structure isn't automatically beautiful, but:
+        </p>
+
+        <div class="quote-block">
+            <p>Structure has a message of its own: it can be a message of strength or elegance, 
+            of waste or economy, of ugliness or beauty. But without it, architecture cannot exist.</p>
+            <cite>— Salvadori, p. 26</cite>
+        </div>
+
+        <div class="key-point">
+            <h3>💡 The Principle</h3>
+            <p>Structural beauty cannot exist without structural correctness. 
+            Make your tower work first — and it may become beautiful.</p>
+        </div>
+    </section>
+
+    <!-- Section 6: Quick Check -->
+    <section class="section" id="section6">
+        <div class="section-number">06</div>
+        <h2>Quick Check</h2>
+
+        <div class="quiz-card">
+            <h3>According to D'Arcy Thompson, what does the form of an object reveal?</h3>
+            <div class="quiz-options">
+                <button class="quiz-option" data-correct="false" onclick="checkAnswer(this)">
+                    The architect's personal style
+                </button>
+                <button class="quiz-option" data-correct="true" onclick="checkAnswer(this)">
+                    The forces acting upon it
+                </button>
+                <button class="quiz-option" data-correct="false" onclick="checkAnswer(this)">
+                    The cost of construction
+                </button>
+                <button class="quiz-option" data-correct="false" onclick="checkAnswer(this)">
+                    The age of the structure
+                </button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+    </section>
+
+    <!-- Sources -->
+    <section class="section" id="sources">
+        <div class="sources-section">
+            <h4>📚 Sources</h4>
+            <div class="source-item">
+                <div class="source-icon">📖</div>
+                <div class="source-info">
+                    <h5>Why Buildings Stand Up</h5>
+                    <p>Mario Salvadori • W.W. Norton, 1980 • Ch. 1: "Structures" (pp. 17–26)</p>
+                </div>
+            </div>
+            <div class="source-item">
+                <div class="source-icon">📘</div>
+                <div class="source-info">
+                    <h5>Statics and Strength of Materials</h5>
+                    <p>Onouye & Kane • Pearson, 4th Ed., 2012 • Introduction (pp. 1–14)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Ready to Continue?</h2>
+        <p>Next: Load Path Concept — tracing forces from roof to ground.</p>
+        <a href="session01.html" class="cta-button">
+            <span>Back to Session 01</span>
+            <span>→</span>
+        </a>
+    </section>
+
+    <footer>
+        <p>ARQ216 — Module 1: Tower Olympiad<br>Universidad Iberoamericana Tijuana — Primavera 2026</p>
+    </footer>
+
+    <div class="bottom-safe"></div>
+
+    <script>
+        const elementData = {
+            slab: {
+                title: 'Slab',
+                desc: 'Horizontal surfaces creating floors and roofs. Distribute loads over area, transfer to beams or walls.'
+            },
+            beam: {
+                title: 'Beam',
+                desc: 'Horizontal members spanning between supports. Collect loads from slabs, transfer to columns. Work in bending.'
+            },
+            column: {
+                title: 'Column',
+                desc: 'Vertical members carrying loads down. Work in compression. Slender columns can buckle before crushing.'
+            },
+            wall: {
+                title: 'Wall',
+                desc: 'Vertical surfaces. Load-bearing walls carry weight; shear walls resist lateral forces from wind/earthquakes.'
+            },
+            foundation: {
+                title: 'Foundation',
+                desc: 'Interface between building and ground. Spreads concentrated loads over larger soil areas.'
+            }
+        };
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', isLight ? '#fafafa' : '#0d0d0d');
+        }
+
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute('content', '#fafafa');
+            }
+        })();
+
+        window.addEventListener('scroll', () => {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / docHeight) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        const sections = document.querySelectorAll('.section');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+        sections.forEach(section => sectionObserver.observe(section));
+
+        const structElements = document.querySelectorAll('.struct-element');
+        const legendItems = document.querySelectorAll('.legend-item');
+        const infoBox = document.getElementById('elementInfo');
+        const infoTitle = document.getElementById('infoTitle');
+        const infoDesc = document.getElementById('infoDesc');
+
+        function showElementInfo(elementType) {
+            const data = elementData[elementType];
+            if (data) {
+                infoTitle.textContent = data.title;
+                infoDesc.textContent = data.desc;
+                infoBox.classList.add('visible');
+            }
+            structElements.forEach(el => el.classList.toggle('active', el.dataset.element === elementType));
+            legendItems.forEach(item => item.classList.toggle('active', item.dataset.element === elementType));
+        }
+
+        structElements.forEach(el => el.addEventListener('click', () => showElementInfo(el.dataset.element)));
+        legendItems.forEach(item => item.addEventListener('click', () => showElementInfo(item.dataset.element)));
+
+        function checkAnswer(button) {
+            const isCorrect = button.dataset.correct === 'true';
+            const feedback = document.getElementById('quizFeedback');
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.correct === 'true') opt.classList.add('correct');
+                else if (opt === button && !isCorrect) opt.classList.add('incorrect');
+            });
+            feedback.classList.add('show');
+            if (isCorrect) {
+                feedback.classList.add('correct');
+                feedback.classList.remove('incorrect');
+                feedback.textContent = '✓ Correct! "The form of an object is a diagram of forces" — we can deduce the forces acting on a structure by observing its shape.';
+            } else {
+                feedback.classList.add('incorrect');
+                feedback.classList.remove('correct');
+                feedback.textContent = '✗ Not quite. Thompson said form is a "diagram of forces" — shape reveals the loads a structure must resist.';
+            }
+        }
+
+        document.querySelectorAll('button, a, .struct-element, .legend-item, .quiz-option').forEach(el => {
+            el.addEventListener('touchend', e => {
+                if (el.tagName === 'A' && el.href) return;
+                e.preventDefault();
+                el.click();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Session 05 - Olympiad Day | ARQ216 Tower Olympiad</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --accent: #e85d04;
+            --accent-light: #f48c06;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-gold: #fbbf24;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a2a;
+            --grid-line: rgba(251, 191, 36, 0.08);
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --accent: #c94d00;
+            --accent-light: #e85d04;
+            --accent-green: #16a34a;
+            --accent-blue: #2563eb;
+            --accent-purple: #9333ea;
+            --accent-cyan: #0891b2;
+            --accent-pink: #db2777;
+            --accent-yellow: #ca8a04;
+            --accent-red: #dc2626;
+            --accent-gold: #d97706;
+            --text-primary: #1a1a1a;
+            --text-secondary: #525252;
+            --border: #e0e0e0;
+            --grid-line: rgba(251, 191, 36, 0.06);
+        }
+
+        body.light-mode .theme-toggle {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Theme Toggle - Mobile Optimized */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-gold);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        body:not(.light-mode) .theme-toggle .icon-sun { display: none; }
+        body.light-mode .theme-toggle .icon-moon { display: none; }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Back Navigation */
+        .back-nav {
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 100;
+            border-bottom: 1px solid var(--accent-gold);
+            margin: 0 -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:active {
+            background: var(--bg-secondary);
+            border-color: var(--accent-gold);
+        }
+
+        /* Header */
+        header {
+            padding: 24px 0 32px;
+            border-bottom: 1px solid var(--accent-gold);
+        }
+
+        .session-badge {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .session-number-large {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: var(--accent-gold);
+            line-height: 1;
+            opacity: 0.5;
+        }
+
+        .session-meta-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-radius: 4px;
+        }
+
+        .badge.module {
+            background: rgba(232, 93, 4, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .badge.duration {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .badge.olympiad {
+            background: rgba(251, 191, 36, 0.25);
+            border: 2px solid var(--accent-gold);
+            color: var(--accent-gold);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        h1 span {
+            display: block;
+            color: var(--accent-gold);
+        }
+
+        .header-desc {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Olympiad Banner */
+        .olympiad-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(232, 93, 4, 0.08));
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .olympiad-banner::before {
+            content: '🏆';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 70px;
+            opacity: 0.15;
+        }
+
+        .olympiad-banner h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
+        .olympiad-banner p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .olympiad-tagline {
+            margin-top: 14px;
+            font-size: 10px;
+            color: var(--accent-gold);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Session Flow - Mobile Optimized */
+        .session-flow {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-top: 24px;
+        }
+
+        .flow-item {
+            padding: 12px 6px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            position: relative;
+            background: var(--bg-card);
+        }
+
+        .flow-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .flow-item.opening::before { background: var(--accent-gold); }
+        .flow-item.vertical::before { background: var(--accent-green); }
+        .flow-item.break::before { background: var(--border); }
+        .flow-item.lateral::before { background: var(--accent-blue); }
+        .flow-item.awards::before { background: linear-gradient(90deg, var(--accent-gold), var(--accent)); }
+
+        .flow-item .flow-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .flow-item .flow-label {
+            font-size: 8px;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .flow-item.opening .flow-label { color: var(--accent-gold); }
+        .flow-item.vertical .flow-label { color: var(--accent-green); }
+        .flow-item.lateral .flow-label { color: var(--accent-blue); }
+        .flow-item.awards .flow-label { color: var(--accent-gold); }
+
+        /* Quick Info Section - Mobile Sidebar Alternative */
+        .quick-info {
+            padding: 24px 0;
+        }
+
+        .info-accordion {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-gold);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .accordion-header .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-header .icon {
+            font-size: 18px;
+        }
+
+        .accordion-header .chevron {
+            font-size: 12px;
+            color: var(--accent-gold);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-header .chevron {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            max-height: 600px;
+        }
+
+        .accordion-body {
+            padding: 0 16px 16px;
+        }
+
+        /* Tracker */
+        .olympiad-tracker {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(251, 191, 36, 0.04));
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .olympiad-tracker h4 {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .tracker-progress {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .tracker-step {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .tracker-step.complete {
+            background: var(--accent-gold);
+        }
+
+        .tracker-step.current {
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .tracker-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .tracker-labels span.complete {
+            color: var(--accent-gold);
+        }
+
+        .tracker-labels span.current {
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        /* Timeline */
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .timeline-item-mobile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timeline-item-mobile:active {
+            background: var(--bg-primary);
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .timeline-item-mobile.opening .timeline-dot { border-color: var(--accent-gold); }
+        .timeline-item-mobile.vertical .timeline-dot { border-color: var(--accent-green); }
+        .timeline-item-mobile.lateral .timeline-dot { border-color: var(--accent-blue); }
+        .timeline-item-mobile.awards .timeline-dot { border-color: var(--accent-gold); background: var(--accent-gold); }
+        .timeline-item-mobile.break .timeline-dot { background: var(--text-secondary); border-color: var(--text-secondary); }
+
+        .timeline-info {
+            flex: 1;
+        }
+
+        .timeline-time {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .timeline-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .timeline-item-mobile.opening .timeline-label { color: var(--accent-gold); }
+        .timeline-item-mobile.vertical .timeline-label { color: var(--accent-green); }
+        .timeline-item-mobile.lateral .timeline-label { color: var(--accent-blue); }
+        .timeline-item-mobile.awards .timeline-label { color: var(--accent-gold); }
+        .timeline-item-mobile.break .timeline-label { color: var(--text-secondary); font-size: 12px; }
+
+        /* Awards Preview */
+        .awards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .award-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .award-item .award-icon {
+            font-size: 20px;
+        }
+
+        .award-item .award-name {
+            color: var(--text-secondary);
+        }
+
+        /* Materials */
+        .materials-list {
+            list-style: none;
+        }
+
+        .materials-list li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .materials-list li:last-child {
+            border-bottom: none;
+        }
+
+        .materials-list li .icon {
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 0 100px;
+        }
+
+        .content-section {
+            margin-bottom: 24px;
+        }
+
+        /* Phase Cards */
+        .phase-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .phase-card.opening { border-top: 4px solid var(--accent-gold); }
+        .phase-card.vertical { border-top: 4px solid var(--accent-green); }
+        .phase-card.lateral { border-top: 4px solid var(--accent-blue); }
+        .phase-card.awards { border-top: 4px solid var(--accent-gold); }
+
+        .phase-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .phase-title-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .phase-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .phase-card.opening .phase-icon { background: rgba(251, 191, 36, 0.15); }
+        .phase-card.vertical .phase-icon { background: rgba(34, 197, 94, 0.15); }
+        .phase-card.lateral .phase-icon { background: rgba(59, 130, 246, 0.15); }
+        .phase-card.awards .phase-icon { background: rgba(251, 191, 36, 0.15); }
+
+        .phase-title h3 {
+            font-size: 15px;
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+
+        .phase-card.opening .phase-title h3 { color: var(--accent-gold); }
+        .phase-card.vertical .phase-title h3 { color: var(--accent-green); }
+        .phase-card.lateral .phase-title h3 { color: var(--accent-blue); }
+        .phase-card.awards .phase-title h3 { color: var(--accent-gold); }
+
+        .phase-title span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .phase-duration {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .phase-duration .time {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--text-primary);
+        }
+
+        .phase-duration .label {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .phase-body {
+            padding: 16px;
+        }
+
+        /* Topic Grid - Mobile */
+        .topic-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .topic-card:active {
+            border-color: var(--accent-gold);
+        }
+
+        .topic-card h4 {
+            font-size: 14px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topic-card h4 .num {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--accent-gold);
+            opacity: 0.4;
+        }
+
+        .topic-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Awards Grid in Phase */
+        .awards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .award-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 10px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .award-card:active {
+            border-color: var(--accent-gold);
+        }
+
+        .award-card .award-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .award-card .award-name {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Break Card */
+        .break-card {
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: var(--bg-secondary);
+        }
+
+        .break-card .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .break-card h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .break-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Final Celebration */
+        .final-celebration {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(232, 93, 4, 0.1));
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 24px 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .final-celebration h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+        }
+
+        .final-celebration p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Module Complete */
+        .module-complete {
+            background: var(--accent-gold);
+            color: #000;
+            padding: 24px;
+            margin-top: 20px;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .module-complete h4 {
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .module-complete .complete-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .module-complete p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Next Module Preview */
+        .next-module-preview {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .next-module-preview .preview-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid var(--accent-purple);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .next-module-preview .preview-content h4 {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--accent-purple);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .next-module-preview .preview-content h3 {
+            font-size: 15px;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .next-module-preview .preview-content p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Session Navigation */
+        .session-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .nav-prev, .nav-next {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+        }
+
+        .nav-next {
+            justify-content: space-between;
+        }
+
+        .nav-prev:active, .nav-next:active {
+            border-color: var(--accent-gold);
+            background: var(--bg-secondary);
+        }
+
+        .nav-prev .arrow, .nav-next .arrow {
+            font-size: 18px;
+            color: var(--accent-gold);
+        }
+
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-text .label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .nav-text .title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            padding: 24px 16px;
+            border-top: 1px solid var(--accent-gold);
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        footer p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Safe area for bottom */
+        .bottom-safe {
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+        <span class="icon icon-moon">🌙</span>
+        <span class="icon icon-sun">☀️</span>
+    </button>
+
+    <div class="container">
+        <!-- Back Navigation -->
+        <nav class="back-nav">
+            <a href="index.html" class="back-link">
+                <span class="arrow">←</span>
+                <span>Back to Syllabus</span>
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <div class="session-badge">
+                <div class="session-number-large">05</div>
+                <div class="session-meta-badges">
+                    <span class="badge module">MODULE 1</span>
+                    <span class="badge duration">4 HOURS</span>
+                    <span class="badge olympiad">🏆 OLYMPIAD</span>
+                </div>
+            </div>
+            
+            <h1>Olympiad Day <span>The Moment of Truth</span></h1>
+            
+            <p class="header-desc">
+                This is it. Your tower faces reality. Your Robot prediction meets the real world. 
+                Load until failure. Measure. Compare. Learn. Celebrate.
+            </p>
+
+            <div class="olympiad-banner">
+                <h3>🏆 Reality vs Prediction</h3>
+                <p>
+                    You predicted your tower would hold a specific load. Now we test it. Accuracy matters 
+                    as much as strength.
+                </p>
+                <div class="olympiad-tagline">DESIGN → MODEL → PREDICT → BUILD → TEST → LEARN</div>
+            </div>
+
+            <div class="session-flow">
+                <div class="flow-item opening">
+                    <div class="flow-icon">🎯</div>
+                    <div class="flow-label">OPENING</div>
+                </div>
+                <div class="flow-item vertical">
+                    <div class="flow-icon">⬇️</div>
+                    <div class="flow-label">VERTICAL</div>
+                </div>
+                <div class="flow-item break">
+                    <div class="flow-icon">☕</div>
+                    <div class="flow-label">BREAK</div>
+                </div>
+                <div class="flow-item lateral">
+                    <div class="flow-icon">➡️</div>
+                    <div class="flow-label">LATERAL</div>
+                </div>
+                <div class="flow-item awards">
+                    <div class="flow-icon">🏆</div>
+                    <div class="flow-label">AWARDS</div>
+                </div>
+                <div class="flow-item break">
+                    <div class="flow-icon">🎉</div>
+                    <div class="flow-label">CELEBRATE</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quick Info Section - Mobile Sidebar Alternative -->
+        <section class="quick-info">
+            <div class="info-accordion">
+                <!-- Olympiad Progress -->
+                <div class="accordion-item open">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">🏆</span>
+                            Module Progress
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="olympiad-tracker">
+                                <h4>Module 1 Journey - FINALE!</h4>
+                                <div class="tracker-progress">
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step current"></div>
+                                </div>
+                                <div class="tracker-labels">
+                                    <span class="complete">LAUNCH</span>
+                                    <span class="complete">LOADS</span>
+                                    <span class="complete">MODEL</span>
+                                    <span class="complete">BUILD</span>
+                                    <span class="current">TEST!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">⏱️</span>
+                            Session Timeline
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="timeline-list">
+                                <div class="timeline-item-mobile opening" onclick="scrollToSection('phase-opening')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">0:00 - 0:50</div>
+                                        <div class="timeline-label">Opening Ceremony</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile vertical" onclick="scrollToSection('phase-vertical')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">0:50 - 1:40</div>
+                                        <div class="timeline-label">⬇️ Vertical Test</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile break">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">1:40 - 2:00</div>
+                                        <div class="timeline-label">☕ Coffee Break I</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile lateral" onclick="scrollToSection('phase-lateral')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">2:00 - 2:50</div>
+                                        <div class="timeline-label">➡️ Lateral Test</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile awards" onclick="scrollToSection('phase-awards')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">2:50 - 3:40</div>
+                                        <div class="timeline-label">🏆 Awards & Reflection</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile break">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">3:40 - 4:00</div>
+                                        <div class="timeline-label">🎉 Celebration</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Awards at Stake -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">🥇</span>
+                            Awards at Stake
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="awards-list">
+                                <div class="award-item">
+                                    <span class="award-icon">🥇</span>
+                                    <span class="award-name">Most Efficient</span>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">🎯</span>
+                                    <span class="award-name">Most Accurate</span>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">💪</span>
+                                    <span class="award-name">Strongest</span>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">🌬️</span>
+                                    <span class="award-name">Wind Resistant</span>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">🏛️</span>
+                                    <span class="award-name">Most Elegant</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Materials -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">📦</span>
+                            Bring Today
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <ul class="materials-list">
+                                <li><span class="icon">🗼</span> Your completed tower</li>
+                                <li><span class="icon">📋</span> Locked prediction form</li>
+                                <li><span class="icon">📸</span> Camera for documentation</li>
+                                <li><span class="icon">🎉</span> Team spirit!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Phase 1: Opening -->
+            <section id="phase-opening" class="content-section">
+                <div class="phase-card opening">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">🎯</div>
+                            <div class="phase-title">
+                                <h3>Opening Ceremony</h3>
+                                <span>Setup, rules review, presentations</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Testing Setup</h4>
+                                <p>Prepare testing apparatus. Calibrate scales. Set up documentation station.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Rules Review</h4>
+                                <p>Testing procedure explained. Scoring formula reviewed. Questions answered.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Tower Showcase</h4>
+                                <p>Each team presents their tower. 1 minute: design approach, prediction, expectations.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Testing Order</h4>
+                                <p>Random draw for test sequence. Anticipation builds. Competition officially begins.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 2: Vertical Load Test -->
+            <section id="phase-vertical" class="content-section">
+                <div class="phase-card vertical">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">⬇️</div>
+                            <div class="phase-title">
+                                <h3>Vertical Load Test</h3>
+                                <span>How much can your tower hold?</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Position Tower</h4>
+                                <p>Place tower on testing platform. Center loading plate. Verify stability.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Incremental Loading</h4>
+                                <p>Add weights gradually. Document behavior. Watch for warning signs.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Load to Failure</h4>
+                                <p>Continue until failure. Record ultimate load. Document failure mode.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Record Results</h4>
+                                <p>Log actual capacity vs prediction. Calculate accuracy. Photo the failure.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Break 1 -->
+            <div class="break-card">
+                <div class="icon">☕</div>
+                <h3>Coffee Break I — 20 minutes</h3>
+                <p>Recover from the excitement. Prepare for lateral testing.</p>
+            </div>
+
+            <!-- Phase 3: Lateral Load Test -->
+            <section id="phase-lateral" class="content-section">
+                <div class="phase-card lateral">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">➡️</div>
+                            <div class="phase-title">
+                                <h3>Lateral Push Test</h3>
+                                <span>How does your tower resist sideways force?</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Reset or New Tower</h4>
+                                <p>If tower survived vertical test, use same tower. Otherwise, test surviving portion.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Apply Lateral Force</h4>
+                                <p>Horizontal push at specified height. Gradual increase. Watch for sway.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Push to Failure</h4>
+                                <p>Continue until collapse or significant yielding. Record ultimate lateral capacity.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Calculate Scores</h4>
+                                <p>Efficiency = Load / Weight. Accuracy = |Prediction - Actual|. Compile results.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 4: Awards & Reflection -->
+            <section id="phase-awards" class="content-section">
+                <div class="phase-card awards">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">🏆</div>
+                            <div class="phase-title">
+                                <h3>Awards & Reflection</h3>
+                                <span>Recognize excellence, learn from results</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Results Review</h4>
+                                <p>Display all team results. Compare predictions vs reality. Discuss surprises.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Awards Ceremony</h4>
+                                <p>Present awards in each category. Recognize achievement. Celebrate engineering.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Failure Analysis</h4>
+                                <p>What failed and why? Compare Robot predictions to actual failure modes.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Key Lessons</h4>
+                                <p>What did the Olympiad teach us? Connection to real structural engineering.</p>
+                            </div>
+                        </div>
+
+                        <div class="awards-grid">
+                            <div class="award-card">
+                                <div class="award-icon">🥇</div>
+                                <div class="award-name">Efficient</div>
+                            </div>
+                            <div class="award-card">
+                                <div class="award-icon">🎯</div>
+                                <div class="award-name">Accurate</div>
+                            </div>
+                            <div class="award-card">
+                                <div class="award-icon">💪</div>
+                                <div class="award-name">Strongest</div>
+                            </div>
+                            <div class="award-card">
+                                <div class="award-icon">🌬️</div>
+                                <div class="award-name">Wind</div>
+                            </div>
+                            <div class="award-card">
+                                <div class="award-icon">🏛️</div>
+                                <div class="award-name">Elegant</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Break 2 / Celebration -->
+            <div class="break-card">
+                <div class="icon">🎉</div>
+                <h3>Celebration — 20 minutes</h3>
+                <p>Module 1 complete! Congratulations to all participants!</p>
+            </div>
+
+            <!-- Final Celebration -->
+            <div class="final-celebration">
+                <h3>🏆 Tower Olympiad Complete!</h3>
+                <p>
+                    You designed. You modeled. You predicted. You built. You tested. 
+                    Most importantly — you learned what it means to be a structural engineer.
+                </p>
+            </div>
+
+            <!-- Module Complete -->
+            <div class="module-complete">
+                <div class="complete-icon">✓</div>
+                <h4>Module 1 Complete</h4>
+                <p>Load Analysis fundamentals mastered through competition</p>
+            </div>
+
+            <!-- Next Module Preview -->
+            <div class="next-module-preview">
+                <div class="preview-icon">🌍</div>
+                <div class="preview-content">
+                    <h4>Coming in Module 2</h4>
+                    <h3>Session 06: Earthquake Challenge</h3>
+                    <p>From tower competition to real buildings. Earthquake forces. Multi-story analysis. New challenges await.</p>
+                </div>
+            </div>
+
+            <!-- Session Navigation -->
+            <nav class="session-nav">
+                <a href="session04.html" class="nav-prev">
+                    <span class="arrow">←</span>
+                    <div class="nav-text">
+                        <span class="label">Previous</span>
+                        <span class="title">04: Build Day 🔨</span>
+                    </div>
+                </a>
+                <a href="session06.html" class="nav-next">
+                    <div class="nav-text">
+                        <span class="label">Module 2 Begins</span>
+                        <span class="title">06: Earthquake Challenge</span>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+
+            <div class="bottom-safe"></div>
+        </main>
+
+        <footer>
+            <p>ARQ216 — Session 05: Olympiad Day<br>Tower Olympiad — Universidad Iberoamericana Tijuana — Primavera - 2026</p>
+            <p style="margin-top: 12px; font-size: 10px;">© All rights reserved. Prof. Miguel Terán</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            // Update meta theme-color for mobile browsers
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) {
+                metaTheme.setAttribute('content', isLight ? '#f5f5f5' : '#0a0a0a');
+            }
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) {
+                    metaTheme.setAttribute('content', '#f5f5f5');
+                }
+            }
+        })();
+
+        // Accordion toggle
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const wasOpen = item.classList.contains('open');
+            
+            // Close all accordions
+            document.querySelectorAll('.accordion-item').forEach(i => {
+                i.classList.remove('open');
+            });
+            
+            // Toggle clicked one
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        // Smooth scroll to sections
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const offset = 80;
+                const elementPosition = section.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Prevent double-tap zoom on buttons
+        document.querySelectorAll('button, .back-link, .nav-prev, .nav-next, .timeline-item-mobile').forEach(el => {
+            el.addEventListener('touchend', e => {
+                e.preventDefault();
+                el.click();
+            });
+        });
+    </script>
+</body>
+</html>

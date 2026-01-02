@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Session 10 - EARTHQUAKE DAY | ARQ216 Grand Finale</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --accent: #e85d04;
+            --accent-light: #f48c06;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-gold: #fbbf24;
+            --accent-seismic: #8b5cf6;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a2a;
+            --grid-line: rgba(251, 191, 36, 0.1);
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --accent: #c94d00;
+            --accent-light: #e85d04;
+            --accent-green: #16a34a;
+            --accent-blue: #2563eb;
+            --accent-purple: #9333ea;
+            --accent-cyan: #0891b2;
+            --accent-pink: #db2777;
+            --accent-yellow: #ca8a04;
+            --accent-red: #dc2626;
+            --accent-gold: #d97706;
+            --accent-seismic: #7c3aed;
+            --text-primary: #1a1a1a;
+            --text-secondary: #525252;
+            --border: #e0e0e0;
+            --grid-line: rgba(251, 191, 36, 0.08);
+        }
+
+        body.light-mode .theme-toggle {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Theme Toggle - Mobile Optimized */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        body:not(.light-mode) .theme-toggle .icon-sun { display: none; }
+        body.light-mode .theme-toggle .icon-moon { display: none; }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Back Navigation */
+        .back-nav {
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            margin: 0 -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:active {
+            background: var(--bg-secondary);
+            border-color: var(--accent-gold);
+        }
+
+        /* Header */
+        header {
+            padding: 24px 0 32px;
+            border-bottom: 2px solid var(--accent-gold);
+            background: linear-gradient(180deg, rgba(251, 191, 36, 0.05), transparent);
+        }
+
+        .session-badge {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .session-number-large {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: var(--accent-gold);
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .session-meta-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-radius: 4px;
+        }
+
+        .badge.module {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid var(--accent-seismic);
+            color: var(--accent-seismic);
+        }
+
+        .badge.duration {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .badge.finale {
+            background: rgba(251, 191, 36, 0.25);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            animation: glow-badge 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-badge {
+            0%, 100% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        h1 span {
+            display: block;
+            color: var(--accent-gold);
+            text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .header-desc {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Earthquake Banner */
+        .earthquake-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(139, 92, 246, 0.1));
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .earthquake-banner::before {
+            content: '🌍';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 60px;
+            opacity: 0.15;
+            animation: shake-icon 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shake-icon {
+            0%, 100% { transform: translateY(-50%) translateX(0); }
+            25% { transform: translateY(-50%) translateX(-3px); }
+            75% { transform: translateY(-50%) translateX(3px); }
+        }
+
+        .earthquake-banner h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
+        .earthquake-banner p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .earthquake-banner .tagline {
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--accent-seismic);
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Session Flow - Mobile Optimized */
+        .session-flow {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-top: 24px;
+        }
+
+        .flow-item {
+            padding: 12px 6px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            position: relative;
+            background: var(--bg-card);
+        }
+
+        .flow-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .flow-item.ceremony::before { background: var(--accent-seismic); }
+        .flow-item.shake::before { background: var(--accent-red); }
+        .flow-item.break::before { background: var(--border); }
+        .flow-item.results::before { background: var(--accent-cyan); }
+        .flow-item.awards::before { background: var(--accent-gold); }
+
+        .flow-item .flow-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .flow-item .flow-label {
+            font-size: 8px;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .flow-item.ceremony .flow-label { color: var(--accent-seismic); }
+        .flow-item.shake .flow-label { color: var(--accent-red); }
+        .flow-item.results .flow-label { color: var(--accent-cyan); }
+        .flow-item.awards .flow-label { color: var(--accent-gold); }
+
+        /* Quick Info Section - Mobile Sidebar Alternative */
+        .quick-info {
+            padding: 24px 0;
+        }
+
+        .info-accordion {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .accordion-header .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-header .icon {
+            font-size: 18px;
+        }
+
+        .accordion-header .chevron {
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-header .chevron {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            max-height: 600px;
+        }
+
+        .accordion-body {
+            padding: 0 16px 16px;
+        }
+
+        /* Tracker - Module 2 COMPLETE */
+        .earthquake-tracker {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(139, 92, 246, 0.08));
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .earthquake-tracker h4 {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .tracker-progress {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .tracker-step {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .tracker-step.complete {
+            background: var(--accent-gold);
+            box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+        }
+
+        .tracker-step.current {
+            background: var(--accent-gold);
+            animation: pulse-gold 2s infinite;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(251, 191, 36, 0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 15px rgba(251, 191, 36, 0.6); }
+        }
+
+        .tracker-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 7px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .tracker-labels span.complete {
+            color: var(--accent-gold);
+        }
+
+        .tracker-labels span.current {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* Awards Preview */
+        .awards-preview {
+            margin-top: 16px;
+        }
+
+        .awards-preview h4 {
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .award-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent-gold);
+        }
+
+        .award-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .award-icon {
+            font-size: 20px;
+        }
+
+        .award-info {
+            flex: 1;
+        }
+
+        .award-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .award-desc {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        /* Timeline */
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .timeline-item-mobile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timeline-item-mobile:active {
+            background: var(--bg-primary);
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .timeline-item-mobile.ceremony .timeline-dot { border-color: var(--accent-seismic); }
+        .timeline-item-mobile.shake .timeline-dot { border-color: var(--accent-red); }
+        .timeline-item-mobile.results .timeline-dot { border-color: var(--accent-cyan); }
+        .timeline-item-mobile.awards .timeline-dot { border-color: var(--accent-gold); }
+        .timeline-item-mobile.break .timeline-dot { background: var(--text-secondary); border-color: var(--text-secondary); }
+
+        .timeline-info {
+            flex: 1;
+        }
+
+        .timeline-time {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .timeline-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .timeline-item-mobile.ceremony .timeline-label { color: var(--accent-seismic); }
+        .timeline-item-mobile.shake .timeline-label { color: var(--accent-red); }
+        .timeline-item-mobile.results .timeline-label { color: var(--accent-cyan); }
+        .timeline-item-mobile.awards .timeline-label { color: var(--accent-gold); }
+        .timeline-item-mobile.break .timeline-label { color: var(--text-secondary); font-size: 12px; }
+
+        /* Objectives */
+        .objectives-list {
+            list-style: none;
+        }
+
+        .objectives-list li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .objectives-list li:last-child {
+            border-bottom: none;
+        }
+
+        .objectives-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-size: 12px;
+        }
+
+        /* Materials */
+        .materials-list {
+            list-style: none;
+        }
+
+        .materials-list li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .materials-list li:last-child {
+            border-bottom: none;
+        }
+
+        .materials-list li .icon {
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 0 100px;
+        }
+
+        .content-section {
+            margin-bottom: 24px;
+        }
+
+        /* Phase Cards */
+        .phase-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .phase-card.ceremony { border-top: 4px solid var(--accent-seismic); }
+        .phase-card.shake { border-top: 4px solid var(--accent-red); }
+        .phase-card.results { border-top: 4px solid var(--accent-cyan); }
+        .phase-card.awards { border-top: 4px solid var(--accent-gold); }
+
+        .phase-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .phase-title-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .phase-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .phase-card.ceremony .phase-icon { background: rgba(139, 92, 246, 0.15); }
+        .phase-card.shake .phase-icon { background: rgba(239, 68, 68, 0.15); }
+        .phase-card.results .phase-icon { background: rgba(6, 182, 212, 0.15); }
+        .phase-card.awards .phase-icon { background: rgba(251, 191, 36, 0.15); }
+
+        .phase-title h3 {
+            font-size: 15px;
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+
+        .phase-card.ceremony .phase-title h3 { color: var(--accent-seismic); }
+        .phase-card.shake .phase-title h3 { color: var(--accent-red); }
+        .phase-card.results .phase-title h3 { color: var(--accent-cyan); }
+        .phase-card.awards .phase-title h3 { color: var(--accent-gold); }
+
+        .phase-title span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .phase-duration {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .phase-duration .time {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--text-primary);
+        }
+
+        .phase-duration .label {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .phase-body {
+            padding: 16px;
+        }
+
+        /* Topic Grid - Mobile */
+        .topic-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .topic-card:active {
+            border-color: var(--accent-gold);
+        }
+
+        .topic-card h4 {
+            font-size: 14px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topic-card h4 .num {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--accent-gold);
+            opacity: 0.4;
+        }
+
+        .topic-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Break Card */
+        .break-card {
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: var(--bg-secondary);
+        }
+
+        .break-card .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .break-card h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .break-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Deliverables */
+        .deliverables-section {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.02));
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .deliverables-section h3 {
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: var(--accent-gold);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .deliverable-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .deliverable-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .deliverable-check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+
+        .deliverable-text h4 {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .deliverable-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Celebration Banner */
+        .celebration-banner {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent));
+            color: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            margin-top: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebration-banner::before {
+            content: '🏆 🌍 🏆';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            opacity: 0.3;
+        }
+
+        .celebration-banner h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .celebration-banner p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Module Complete */
+        .module-complete {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-seismic);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .module-complete .check-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .module-complete h4 {
+            font-size: 14px;
+            color: var(--accent-seismic);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .module-complete p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Session Navigation */
+        .session-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .nav-prev, .nav-next {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+        }
+
+        .nav-next {
+            justify-content: space-between;
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), transparent);
+        }
+
+        .nav-prev:active, .nav-next:active {
+            border-color: var(--accent-gold);
+            background: var(--bg-secondary);
+        }
+
+        .nav-prev .arrow, .nav-next .arrow {
+            font-size: 18px;
+            color: var(--accent-gold);
+        }
+
+        .nav-next .arrow {
+            color: var(--accent-green);
+        }
+
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-text .label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .nav-text .title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .module-badge-nav {
+            display: inline-block;
+            background: var(--accent-green);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* Footer */
+        footer {
+            padding: 24px 16px;
+            border-top: 2px solid var(--accent-gold);
+            text-align: center;
+            margin-top: 30px;
+            background: linear-gradient(180deg, transparent, rgba(251, 191, 36, 0.05));
+        }
+
+        footer p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Safe area for bottom */
+        .bottom-safe {
+            height: 80px;
+        }
+
+        /* Scoring Preview */
+        .scoring-preview {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .scoring-preview h4 {
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .score-item:last-child {
+            border-bottom: none;
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .score-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+        <span class="icon icon-moon">🌙</span>
+        <span class="icon icon-sun">☀️</span>
+    </button>
+
+    <div class="container">
+        <!-- Back Navigation -->
+        <nav class="back-nav">
+            <a href="index.html" class="back-link">
+                <span class="arrow">←</span>
+                <span>Back to Syllabus</span>
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <div class="session-badge">
+                <div class="session-number-large">10</div>
+                <div class="session-meta-badges">
+                    <span class="badge module">MODULE 2</span>
+                    <span class="badge duration">4 HOURS</span>
+                    <span class="badge finale">🌍 EARTHQUAKE DAY</span>
+                </div>
+            </div>
+            
+            <h1>EARTHQUAKE DAY <span>Grand Finale 🏆</span></h1>
+            
+            <p class="header-desc">
+                The shake table awaits. Your tower. Your prediction. Reality as judge. 
+                Increasing intensity until failure. May the best seismic design survive.
+            </p>
+
+            <div class="earthquake-banner">
+                <h3>🌍 Reality vs Prediction</h3>
+                <p>
+                    You predicted: "Survives intensity ___." Now we test. 
+                    The shake table doesn't care about your calculations. Only truth remains.
+                </p>
+                <div class="tagline">DESIGN → MODEL → PREDICT → BUILD → SHAKE → LEARN</div>
+            </div>
+
+            <div class="session-flow">
+                <div class="flow-item ceremony">
+                    <div class="flow-icon">🎯</div>
+                    <div class="flow-label">CEREMONY</div>
+                </div>
+                <div class="flow-item shake">
+                    <div class="flow-icon">〰️</div>
+                    <div class="flow-label">SHAKE</div>
+                </div>
+                <div class="flow-item break">
+                    <div class="flow-icon">☕</div>
+                    <div class="flow-label">BREAK</div>
+                </div>
+                <div class="flow-item results">
+                    <div class="flow-icon">📊</div>
+                    <div class="flow-label">RESULTS</div>
+                </div>
+                <div class="flow-item awards">
+                    <div class="flow-icon">🏆</div>
+                    <div class="flow-label">AWARDS</div>
+                </div>
+                <div class="flow-item break">
+                    <div class="flow-icon">🎉</div>
+                    <div class="flow-label">PARTY</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quick Info Section - Mobile Sidebar Alternative -->
+        <section class="quick-info">
+            <div class="info-accordion">
+                <!-- Earthquake Challenge Progress - COMPLETE -->
+                <div class="accordion-item open">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">🏆</span>
+                            Challenge Complete!
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="earthquake-tracker">
+                                <h4>Module 2 Journey — FINALE</h4>
+                                <div class="tracker-progress">
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step current"></div>
+                                </div>
+                                <div class="tracker-labels">
+                                    <span class="complete">LAUNCH</span>
+                                    <span class="complete">DESIGN</span>
+                                    <span class="complete">MODEL</span>
+                                    <span class="complete">BUILD</span>
+                                    <span class="current">SHAKE</span>
+                                </div>
+                            </div>
+
+                            <div class="awards-preview">
+                                <h4>🏆 Awards Today</h4>
+                                <div class="award-item">
+                                    <span class="award-icon">🥇</span>
+                                    <div class="award-info">
+                                        <div class="award-name">Survivor</div>
+                                        <div class="award-desc">Highest intensity survived</div>
+                                    </div>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">🎯</span>
+                                    <div class="award-info">
+                                        <div class="award-name">Most Accurate</div>
+                                        <div class="award-desc">Prediction closest to reality</div>
+                                    </div>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">🪶</span>
+                                    <div class="award-info">
+                                        <div class="award-name">Most Efficient</div>
+                                        <div class="award-desc">Best survival/weight ratio</div>
+                                    </div>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">🌊</span>
+                                    <div class="award-info">
+                                        <div class="award-name">Best Behavior</div>
+                                        <div class="award-desc">Cleanest oscillation pattern</div>
+                                    </div>
+                                </div>
+                                <div class="award-item">
+                                    <span class="award-icon">🏛️</span>
+                                    <div class="award-info">
+                                        <div class="award-name">Most Elegant</div>
+                                        <div class="award-desc">Best structural aesthetics</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">🕐</span>
+                            Session Timeline
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="timeline-list">
+                                <div class="timeline-item-mobile ceremony" onclick="scrollToSection('phase-ceremony')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">0:00 - 0:50</div>
+                                        <div class="timeline-label">Opening Ceremony</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile shake" onclick="scrollToSection('phase-shake')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">0:50 - 1:40</div>
+                                        <div class="timeline-label">〰️ Shake Table Tests</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile break">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">1:40 - 2:00</div>
+                                        <div class="timeline-label">☕ Coffee Break I</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile results" onclick="scrollToSection('phase-results')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">2:00 - 2:50</div>
+                                        <div class="timeline-label">Results & Analysis</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile awards" onclick="scrollToSection('phase-awards')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">2:50 - 3:40</div>
+                                        <div class="timeline-label">🏆 Awards & Reflection</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile break">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">3:40 - 4:00</div>
+                                        <div class="timeline-label">🎉 Celebration!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scoring -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">📊</span>
+                            Scoring System
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="scoring-preview">
+                                <h4>How Winners Are Determined</h4>
+                                <div class="score-item">
+                                    <span class="score-label">Survival intensity</span>
+                                    <span class="score-value">Level reached</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Prediction accuracy</span>
+                                    <span class="score-value">|Predicted - Actual|</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Efficiency ratio</span>
+                                    <span class="score-value">Intensity / Weight</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Behavior quality</span>
+                                    <span class="score-value">Judges' score</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Materials -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">📦</span>
+                            Bring Today
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <ul class="materials-list">
+                                <li><span class="icon">🏗️</span> Your completed tower</li>
+                                <li><span class="icon">📋</span> Prediction form (locked)</li>
+                                <li><span class="icon">📱</span> Phone for video recording</li>
+                                <li><span class="icon">📓</span> Notebook for observations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Phase 1: Opening Ceremony -->
+            <section id="phase-ceremony" class="content-section">
+                <div class="phase-card ceremony">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">🎯</div>
+                            <div class="phase-title">
+                                <h3>Opening Ceremony</h3>
+                                <span>Setup and tower showcase</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Shake Table Setup</h4>
+                                <p>Calibrate equipment. Verify intensity levels. Explain testing protocol.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Rules Review</h4>
+                                <p>Testing procedure. What counts as failure. Recording requirements.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Tower Showcase</h4>
+                                <p>Each team presents their tower. Brief strategy explanation. Prediction reveal.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Testing Order</h4>
+                                <p>Random draw for testing sequence. Prepare your tower for mounting.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 2: Shake Table Tests -->
+            <section id="phase-shake" class="content-section">
+                <div class="phase-card shake">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">〰️</div>
+                            <div class="phase-title">
+                                <h3>Shake Table Tests</h3>
+                                <span>THE EARTHQUAKE 🌍</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Mount Tower</h4>
+                                <p>Secure tower to shake table base. Verify connection. Final inspection.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Start Low</h4>
+                                <p>Begin at intensity level 1. Observe behavior. Note any issues.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Increase Intensity</h4>
+                                <p>Step up through levels. Watch for resonance. Record at each stage.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Until Failure</h4>
+                                <p>Continue until collapse or max intensity. Record final level survived.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Break 1 -->
+            <div class="break-card">
+                <div class="icon">☕</div>
+                <h3>Coffee Break I — 20 minutes</h3>
+                <p>Towers tested. Results being compiled. Breathe.</p>
+            </div>
+
+            <!-- Phase 3: Results & Analysis -->
+            <section id="phase-results" class="content-section">
+                <div class="phase-card results">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">📊</div>
+                            <div class="phase-title">
+                                <h3>Results & Analysis</h3>
+                                <span>Compare predictions to reality</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Results Board</h4>
+                                <p>All towers: predicted vs actual. Accuracy comparison. Rankings emerge.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Failure Analysis</h4>
+                                <p>Why did each tower fail? Resonance? Joint failure? Design flaw?</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> What Worked</h4>
+                                <p>Successful strategies identified. What made the survivors survive?</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Calculate Scores</h4>
+                                <p>Efficiency ratios. Accuracy points. Determine award winners.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 4: Awards & Reflection -->
+            <section id="phase-awards" class="content-section">
+                <div class="phase-card awards">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">🏆</div>
+                            <div class="phase-title">
+                                <h3>Awards & Reflection</h3>
+                                <span>Celebrate and learn</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Award Ceremony</h4>
+                                <p>🥇 Survivor 🎯 Most Accurate 🪶 Most Efficient 🌊 Best Behavior 🏛️ Most Elegant</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Winner Insights</h4>
+                                <p>What did winning teams do differently? Key decisions that mattered.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Key Lessons</h4>
+                                <p>Dynamic ≠ static. Resonance is real. Prediction builds understanding.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Module 2 Complete</h4>
+                                <p>Course wrap-up. Connection to real seismic engineering. What's next?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Break 2 / Celebration -->
+            <div class="break-card" style="border-color: var(--accent-gold); background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent);">
+                <div class="icon">🎉</div>
+                <h3>Celebration! — 20 minutes</h3>
+                <p>Module 2 complete! You survived the earthquake challenge!</p>
+            </div>
+
+            <!-- Deliverables -->
+            <div class="deliverables-section">
+                <h3>🏆 Module 2 Deliverables — Complete</h3>
+                <div class="deliverable-item">
+                    <div class="deliverable-check">✓</div>
+                    <div class="deliverable-text">
+                        <h4>Shake Table Results</h4>
+                        <p>Final intensity level survived. Failure mode documented.</p>
+                    </div>
+                </div>
+                <div class="deliverable-item">
+                    <div class="deliverable-check">✓</div>
+                    <div class="deliverable-text">
+                        <h4>Prediction Accuracy</h4>
+                        <p>Comparison: predicted vs actual performance.</p>
+                    </div>
+                </div>
+                <div class="deliverable-item">
+                    <div class="deliverable-check">✓</div>
+                    <div class="deliverable-text">
+                        <h4>Lessons Learned</h4>
+                        <p>Key insights about seismic design from your experience.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Celebration Banner -->
+            <div class="celebration-banner">
+                <h3>MODULE 2 COMPLETE! 🌍</h3>
+                <p>
+                    You designed, modeled, predicted, built, and tested an earthquake-resistant tower. 
+                    You understand dynamic vs static. You've felt resonance. You're engineers now.
+                </p>
+            </div>
+
+            <!-- Module Complete -->
+            <div class="module-complete">
+                <div class="check-icon">✅</div>
+                <h4>EARTHQUAKE CHALLENGE COMPLETE</h4>
+                <p>
+                    Module 1: Static loads — push and hold<br>
+                    Module 2: Dynamic loads — shake until failure<br><br>
+                    You've completed both. Ready for Module 3: Walls & Foundations.
+                </p>
+            </div>
+
+            <!-- Session Navigation -->
+            <nav class="session-nav">
+                <a href="session09.html" class="nav-prev">
+                    <span class="arrow">←</span>
+                    <div class="nav-text">
+                        <span class="label">Previous</span>
+                        <span class="title">09: Build Day 🔨</span>
+                    </div>
+                </a>
+                <a href="session11.html" class="nav-next">
+                    <div class="nav-text">
+                        <span class="label">Next Module</span>
+                        <span class="title">11: Project Launch <span class="module-badge-nav">M3</span></span>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+
+            <div class="bottom-safe"></div>
+        </main>
+
+        <footer>
+            <p>ARQ216 — Session 10: EARTHQUAKE DAY — Grand Finale 🏆<br>Module 2 Complete — Universidad Iberoamericana Tijuana — Primavera - 2026</p>
+            <p style="margin-top: 12px; font-size: 10px;">© All rights reserved. Prof. Miguel Terán</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            // Update meta theme-color for mobile browsers
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) {
+                metaTheme.setAttribute('content', isLight ? '#f5f5f5' : '#0a0a0a');
+            }
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) {
+                    metaTheme.setAttribute('content', '#f5f5f5');
+                }
+            }
+        })();
+
+        // Accordion toggle
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const wasOpen = item.classList.contains('open');
+            
+            // Close all accordions
+            document.querySelectorAll('.accordion-item').forEach(i => {
+                i.classList.remove('open');
+            });
+            
+            // Toggle clicked one
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        // Smooth scroll to sections
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const offset = 80;
+                const elementPosition = section.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Prevent double-tap zoom on buttons
+        document.querySelectorAll('button, .back-link, .nav-prev, .nav-next, .timeline-item-mobile').forEach(el => {
+            el.addEventListener('touchend', e => {
+                e.preventDefault();
+                el.click();
+            });
+        });
+    </script>
+</body>
+</html>

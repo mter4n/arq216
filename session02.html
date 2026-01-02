@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Session 02 - Loads & Material Testing | ARQ216 Tower Olympiad</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --accent: #e85d04;
+            --accent-light: #f48c06;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-gold: #fbbf24;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a2a;
+            --grid-line: rgba(232, 93, 4, 0.08);
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --accent: #c94d00;
+            --accent-light: #e85d04;
+            --accent-green: #16a34a;
+            --accent-blue: #2563eb;
+            --accent-purple: #9333ea;
+            --accent-cyan: #0891b2;
+            --accent-pink: #db2777;
+            --accent-yellow: #ca8a04;
+            --accent-red: #dc2626;
+            --accent-gold: #d97706;
+            --text-primary: #1a1a1a;
+            --text-secondary: #525252;
+            --border: #e0e0e0;
+            --grid-line: rgba(232, 93, 4, 0.06);
+        }
+
+        body.light-mode .theme-toggle {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Theme Toggle - Mobile Optimized */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        body:not(.light-mode) .theme-toggle .icon-sun { display: none; }
+        body.light-mode .theme-toggle .icon-moon { display: none; }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Back Navigation */
+        .back-nav {
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            margin: 0 -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:active {
+            background: var(--bg-secondary);
+            border-color: var(--accent);
+        }
+
+        /* Header */
+        header {
+            padding: 24px 0 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .session-badge {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .session-number-large {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: var(--accent);
+            line-height: 1;
+            opacity: 0.3;
+        }
+
+        .session-meta-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-radius: 4px;
+        }
+
+        .badge.module {
+            background: rgba(232, 93, 4, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .badge.duration {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .badge.lab {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        h1 span {
+            display: block;
+            color: var(--accent);
+        }
+
+        .header-desc {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Key Concept Banner */
+        .key-concept-banner {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(6, 182, 212, 0.08));
+            border: 2px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-concept-banner::before {
+            content: '🔬';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 60px;
+            opacity: 0.1;
+        }
+
+        .key-concept-banner h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        .key-concept-banner p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* Session Flow - Mobile Optimized */
+        .session-flow {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-top: 24px;
+        }
+
+        .flow-item {
+            padding: 12px 6px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            position: relative;
+            background: var(--bg-card);
+        }
+
+        .flow-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .flow-item.theory::before { background: var(--accent-purple); }
+        .flow-item.lab::before { background: var(--accent-green); }
+        .flow-item.break::before { background: var(--border); }
+        .flow-item.calc::before { background: var(--accent-yellow); }
+        .flow-item.design::before { background: var(--accent-blue); }
+
+        .flow-item .flow-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .flow-item .flow-label {
+            font-size: 8px;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .flow-item.theory .flow-label { color: var(--accent-purple); }
+        .flow-item.lab .flow-label { color: var(--accent-green); }
+        .flow-item.calc .flow-label { color: var(--accent-yellow); }
+        .flow-item.design .flow-label { color: var(--accent-blue); }
+
+        /* Quick Info Section - Mobile Sidebar Alternative */
+        .quick-info {
+            padding: 24px 0;
+        }
+
+        .info-accordion {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .accordion-header .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-header .icon {
+            font-size: 18px;
+        }
+
+        .accordion-header .chevron {
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-header .chevron {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            max-height: 500px;
+        }
+
+        .accordion-body {
+            padding: 0 16px 16px;
+        }
+
+        /* Tracker */
+        .olympiad-tracker {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.02));
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .olympiad-tracker h4 {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .tracker-progress {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .tracker-step {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .tracker-step.complete {
+            background: var(--accent-gold);
+        }
+
+        .tracker-step.current {
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tracker-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .tracker-labels span.complete {
+            color: var(--accent-gold);
+        }
+
+        .tracker-labels span.current {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Timeline */
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .timeline-item-mobile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timeline-item-mobile:active {
+            background: var(--bg-primary);
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .timeline-item-mobile.theory .timeline-dot { border-color: var(--accent-purple); }
+        .timeline-item-mobile.lab .timeline-dot { border-color: var(--accent-green); }
+        .timeline-item-mobile.calc .timeline-dot { border-color: var(--accent-yellow); }
+        .timeline-item-mobile.design .timeline-dot { border-color: var(--accent-blue); }
+        .timeline-item-mobile.break .timeline-dot { background: var(--text-secondary); border-color: var(--text-secondary); }
+
+        .timeline-info {
+            flex: 1;
+        }
+
+        .timeline-time {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .timeline-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .timeline-item-mobile.theory .timeline-label { color: var(--accent-purple); }
+        .timeline-item-mobile.lab .timeline-label { color: var(--accent-green); }
+        .timeline-item-mobile.calc .timeline-label { color: var(--accent-yellow); }
+        .timeline-item-mobile.design .timeline-label { color: var(--accent-blue); }
+        .timeline-item-mobile.break .timeline-label { color: var(--text-secondary); font-size: 12px; }
+
+        /* Objectives */
+        .objectives-list {
+            list-style: none;
+        }
+
+        .objectives-list li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .objectives-list li:last-child {
+            border-bottom: none;
+        }
+
+        .objectives-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-size: 12px;
+        }
+
+        /* Materials */
+        .materials-list {
+            list-style: none;
+        }
+
+        .materials-list li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .materials-list li:last-child {
+            border-bottom: none;
+        }
+
+        .materials-list li .icon {
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 0 100px;
+        }
+
+        .content-section {
+            margin-bottom: 24px;
+        }
+
+        /* Phase Cards */
+        .phase-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .phase-card.theory { border-top: 4px solid var(--accent-purple); }
+        .phase-card.lab { border-top: 4px solid var(--accent-green); }
+        .phase-card.calc { border-top: 4px solid var(--accent-yellow); }
+        .phase-card.design { border-top: 4px solid var(--accent-blue); }
+
+        .phase-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .phase-title-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .phase-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .phase-card.theory .phase-icon { background: rgba(168, 85, 247, 0.15); }
+        .phase-card.lab .phase-icon { background: rgba(34, 197, 94, 0.15); }
+        .phase-card.calc .phase-icon { background: rgba(234, 179, 8, 0.15); }
+        .phase-card.design .phase-icon { background: rgba(59, 130, 246, 0.15); }
+
+        .phase-title h3 {
+            font-size: 15px;
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+
+        .phase-card.theory .phase-title h3 { color: var(--accent-purple); }
+        .phase-card.lab .phase-title h3 { color: var(--accent-green); }
+        .phase-card.calc .phase-title h3 { color: var(--accent-yellow); }
+        .phase-card.design .phase-title h3 { color: var(--accent-blue); }
+
+        .phase-title span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .phase-duration {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .phase-duration .time {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--text-primary);
+        }
+
+        .phase-duration .label {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .phase-body {
+            padding: 16px;
+        }
+
+        /* Topic Grid - Mobile */
+        .topic-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .topic-card:active {
+            border-color: var(--accent);
+        }
+
+        .topic-card h4 {
+            font-size: 14px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topic-card h4 .num {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--accent);
+            opacity: 0.4;
+        }
+
+        .topic-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Break Card */
+        .break-card {
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: var(--bg-secondary);
+        }
+
+        .break-card .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .break-card h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .break-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Deliverables */
+        .deliverables-section {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.02));
+            border: 1px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .deliverables-section h3 {
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: var(--accent-gold);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .deliverable-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+        }
+
+        .deliverable-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .deliverable-check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+
+        .deliverable-text h4 {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .deliverable-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Countdown Box */
+        .countdown-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.02));
+            border: 1px solid var(--accent-red);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .countdown-box h4 {
+            font-size: 11px;
+            color: var(--accent-red);
+            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+        }
+
+        .countdown-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: var(--accent-red);
+        }
+
+        .countdown-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Next Session Preview */
+        .next-session-preview {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .next-session-preview .preview-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid var(--accent-purple);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .next-session-preview .preview-content h4 {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--accent-purple);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .next-session-preview .preview-content h3 {
+            font-size: 15px;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .next-session-preview .preview-content p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .lock-warning {
+            display: inline-block;
+            background: var(--accent-red);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* Session Navigation */
+        .session-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .nav-prev, .nav-next {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+        }
+
+        .nav-next {
+            justify-content: space-between;
+        }
+
+        .nav-prev:active, .nav-next:active {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .nav-prev .arrow, .nav-next .arrow {
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-text .label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .nav-text .title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            padding: 24px 16px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        footer p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Safe area for bottom */
+        .bottom-safe {
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+        <span class="icon icon-moon">🌙</span>
+        <span class="icon icon-sun">☀️</span>
+    </button>
+
+    <div class="container">
+        <!-- Back Navigation -->
+        <nav class="back-nav">
+            <a href="index.html" class="back-link">
+                <span class="arrow">←</span>
+                <span>Back to Syllabus</span>
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <div class="session-badge">
+                <div class="session-number-large">02</div>
+                <div class="session-meta-badges">
+                    <span class="badge module">MODULE 1</span>
+                    <span class="badge duration">4 HOURS</span>
+                    <span class="badge lab">🔬 TESTING</span>
+                </div>
+            </div>
+            
+            <h1>Dead & Live Loads <span>+ Material Testing</span></h1>
+            
+            <p class="header-desc">
+                Today you'll learn what loads your tower must resist — and discover the actual 
+                strength of popsicle sticks through hands-on testing.
+            </p>
+
+            <div class="key-concept-banner">
+                <h3>🔬 Real Data for Real Predictions</h3>
+                <p>
+                    Engineering software is only as good as the data you give it. Today you'll test 
+                    actual popsicle sticks to failure — this is YOUR data for YOUR Robot model.
+                </p>
+            </div>
+
+            <div class="session-flow">
+                <div class="flow-item theory">
+                    <div class="flow-icon">📚</div>
+                    <div class="flow-label">THEORY</div>
+                </div>
+                <div class="flow-item lab">
+                    <div class="flow-icon">🔬</div>
+                    <div class="flow-label">LAB</div>
+                </div>
+                <div class="flow-item break">
+                    <div class="flow-icon">☕</div>
+                    <div class="flow-label">BREAK</div>
+                </div>
+                <div class="flow-item calc">
+                    <div class="flow-icon">🔢</div>
+                    <div class="flow-label">CALC</div>
+                </div>
+                <div class="flow-item design">
+                    <div class="flow-icon">✏️</div>
+                    <div class="flow-label">DESIGN</div>
+                </div>
+                <div class="flow-item break">
+                    <div class="flow-icon">☕</div>
+                    <div class="flow-label">BREAK</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quick Info Section - Mobile Sidebar Alternative -->
+        <section class="quick-info">
+            <div class="info-accordion">
+                <!-- Olympiad Progress -->
+                <div class="accordion-item open">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">🏆</span>
+                            Module Progress
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="olympiad-tracker">
+                                <h4>Module 1 Journey</h4>
+                                <div class="tracker-progress">
+                                    <div class="tracker-step complete"></div>
+                                    <div class="tracker-step current"></div>
+                                    <div class="tracker-step"></div>
+                                    <div class="tracker-step"></div>
+                                    <div class="tracker-step"></div>
+                                </div>
+                                <div class="tracker-labels">
+                                    <span class="complete">LAUNCH</span>
+                                    <span class="current">LOADS</span>
+                                    <span>MODEL</span>
+                                    <span>BUILD</span>
+                                    <span>TEST</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">⏱️</span>
+                            Session Timeline
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="timeline-list">
+                                <div class="timeline-item-mobile theory" onclick="scrollToSection('phase-theory')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">0:00 - 0:50</div>
+                                        <div class="timeline-label">Load Theory</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile lab" onclick="scrollToSection('phase-lab')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">0:50 - 1:40</div>
+                                        <div class="timeline-label">🔬 Material Testing</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile break">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">1:40 - 2:00</div>
+                                        <div class="timeline-label">☕ Coffee Break I</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile calc" onclick="scrollToSection('phase-calc')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">2:00 - 2:50</div>
+                                        <div class="timeline-label">Load Calculations</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile design" onclick="scrollToSection('phase-design')">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">2:50 - 3:40</div>
+                                        <div class="timeline-label">Design Refinement</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item-mobile break">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-info">
+                                        <div class="timeline-time">3:40 - 4:00</div>
+                                        <div class="timeline-label">☕ Coffee Break II</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">🎯</span>
+                            Learning Objectives
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <ul class="objectives-list">
+                                <li>Classify dead vs live loads</li>
+                                <li>Know popsicle stick properties</li>
+                                <li>Calculate tower target loads</li>
+                                <li>Refine design with real data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Materials -->
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="title">
+                            <span class="icon">📦</span>
+                            Materials Today
+                        </span>
+                        <span class="chevron">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <ul class="materials-list">
+                                <li><span class="icon">📏</span> Testing apparatus</li>
+                                <li><span class="icon">⚖️</span> Digital scale</li>
+                                <li><span class="icon">🪵</span> Sample popsicle sticks</li>
+                                <li><span class="icon">📋</span> Data recording sheets</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Phase 1: Load Theory -->
+            <section id="phase-theory" class="content-section">
+                <div class="phase-card theory">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">📚</div>
+                            <div class="phase-title">
+                                <h3>Dead & Live Load Theory</h3>
+                                <span>What your tower must carry</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Dead vs Live Loads</h4>
+                                <p>Permanent loads (self-weight) vs variable loads (people, equipment).</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Load Factors</h4>
+                                <p>Why we multiply loads by safety factors. "Might work" vs "will work."</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Load Combinations</h4>
+                                <p>How loads combine in the worst case. Vertical + lateral forces together.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Competition Loads</h4>
+                                <p>Vertical stacking test + lateral push test. Both must be resisted.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 2: Material Testing Lab -->
+            <section id="phase-lab" class="content-section">
+                <div class="phase-card lab">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">🔬</div>
+                            <div class="phase-title">
+                                <h3>Material Testing Lab</h3>
+                                <span>Hands-on testing of popsicle sticks</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Dimensions & Weight</h4>
+                                <p>Measure stick dimensions with calipers. Calculate density and cross-section area.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Bending Test</h4>
+                                <p>Support at two ends, load at center until failure. Record breaking load.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Compression Test</h4>
+                                <p>Stand stick vertically, apply load until buckling. Observe short vs long behavior.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Data Recording</h4>
+                                <p>Document all measurements. Calculate averages. This data goes into Robot.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Break 1 -->
+            <div class="break-card">
+                <div class="icon">☕</div>
+                <h3>Coffee Break I — 20 minutes</h3>
+                <p>Compile your test data. Compare results with other teams.</p>
+            </div>
+
+            <!-- Phase 3: Load Calculations -->
+            <section id="phase-calc" class="content-section">
+                <div class="phase-card calc">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">🔢</div>
+                            <div class="phase-title">
+                                <h3>Load Calculations</h3>
+                                <span>Calculate what your tower must resist</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Tower Self-Weight</h4>
+                                <p>Estimate dead load from your design. Number of sticks × average weight.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Target Live Load</h4>
+                                <p>Set your performance goal. Conservative, ambitious, or hero level?</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Factored Loads</h4>
+                                <p>Apply load factors for Robot analysis. Calculate design loads with safety margin.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Quick Stress Check</h4>
+                                <p>Simplified check: can your members handle the stress?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 4: Design Refinement -->
+            <section id="phase-design" class="content-section">
+                <div class="phase-card design">
+                    <div class="phase-header">
+                        <div class="phase-title-group">
+                            <div class="phase-icon">✏️</div>
+                            <div class="phase-title">
+                                <h3>Design Refinement</h3>
+                                <span>Update your design with real data</span>
+                            </div>
+                        </div>
+                        <div class="phase-duration">
+                            <div class="time">50</div>
+                            <div class="label">minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-body">
+                        <div class="topic-grid">
+                            <div class="topic-card">
+                                <h4><span class="num">1</span> Review Initial Sketches</h4>
+                                <p>What would you change now that you know material properties?</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">2</span> Robot-Ready Drawing</h4>
+                                <p>Create cleaner version with dimensions. Mark node points. Count members.</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">3</span> Peer Review</h4>
+                                <p>Present design to another team. What did they notice that you missed?</p>
+                            </div>
+                            <div class="topic-card">
+                                <h4><span class="num">4</span> Wrap-up</h4>
+                                <p>Finalize geometry. List all node coordinates. Come ready for Robot next session.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Break 2 -->
+            <div class="break-card">
+                <div class="icon">☕</div>
+                <h3>Coffee Break II — 20 minutes</h3>
+                <p>Session complete! Finalize data sheets and design drawings.</p>
+            </div>
+
+            <!-- Deliverables -->
+            <div class="deliverables-section">
+                <h3>📦 Session Deliverables</h3>
+                <div class="deliverable-item">
+                    <div class="deliverable-check">☐</div>
+                    <div class="deliverable-text">
+                        <h4>Material Properties Data Sheet</h4>
+                        <p>Complete test data from all stations with calculated averages.</p>
+                    </div>
+                </div>
+                <div class="deliverable-item">
+                    <div class="deliverable-check">☐</div>
+                    <div class="deliverable-text">
+                        <h4>Load Calculation Worksheet</h4>
+                        <p>Target loads and factored design loads for Robot input.</p>
+                    </div>
+                </div>
+                <div class="deliverable-item">
+                    <div class="deliverable-check">☐</div>
+                    <div class="deliverable-text">
+                        <h4>Refined Tower Design</h4>
+                        <p>Robot-ready sketch with dimensions and node points marked.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Countdown -->
+            <div class="countdown-box">
+                <h4>⚠️ PREDICTION LOCK COUNTDOWN</h4>
+                <div class="countdown-number">1</div>
+                <div class="countdown-label">session until Robot prediction must be locked</div>
+            </div>
+
+            <!-- Next Session Preview -->
+            <div class="next-session-preview">
+                <div class="preview-icon">🖥️</div>
+                <div class="preview-content">
+                    <h4>Coming Next</h4>
+                    <h3>Session 03: Robot Modeling <span class="lock-warning">🔒 LOCK</span></h3>
+                    <p>Build your tower in Robot. Run analysis. Lock your prediction — no changes after that!</p>
+                </div>
+            </div>
+
+            <!-- Session Navigation -->
+            <nav class="session-nav">
+                <a href="session01.html" class="nav-prev">
+                    <span class="arrow">←</span>
+                    <div class="nav-text">
+                        <span class="label">Previous</span>
+                        <span class="title">01: Challenge Launch</span>
+                    </div>
+                </a>
+                <a href="session03.html" class="nav-next">
+                    <div class="nav-text">
+                        <span class="label">Next Session</span>
+                        <span class="title">03: Robot Model 🔒</span>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+
+            <div class="bottom-safe"></div>
+        </main>
+
+        <footer>
+            <p>ARQ216 — Session 02: Loads & Material Testing<br>Tower Olympiad — Universidad Iberoamericana Tijuana — Primavera - 2026</p>
+            <p style="margin-top: 12px; font-size: 10px;">© All rights reserved. Prof. Miguel Terán</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            // Update meta theme-color for mobile browsers
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) {
+                metaTheme.setAttribute('content', isLight ? '#f5f5f5' : '#0a0a0a');
+            }
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) {
+                    metaTheme.setAttribute('content', '#f5f5f5');
+                }
+            }
+        })();
+
+        // Accordion toggle
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const wasOpen = item.classList.contains('open');
+            
+            // Close all accordions
+            document.querySelectorAll('.accordion-item').forEach(i => {
+                i.classList.remove('open');
+            });
+            
+            // Toggle clicked one
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        // Smooth scroll to sections
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const offset = 80;
+                const elementPosition = section.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Prevent double-tap zoom on buttons
+        document.querySelectorAll('button, .back-link, .nav-prev, .nav-next, .timeline-item-mobile').forEach(el => {
+            el.addEventListener('touchend', e => {
+                e.preventDefault();
+                el.click();
+            });
+        });
+    </script>
+</body>
+</html>

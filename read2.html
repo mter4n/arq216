@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0d0d0d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Load Path Concept | ARQ216 Micro-Lesson</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --bg-card: #161616;
+            --bg-elevated: #1a1a1a;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --accent-soft: rgba(59, 130, 246, 0.15);
+            --border: #2a2a2a;
+            --gravity: #ef4444;
+            --reaction: #22c55e;
+            --path: #f59e0b;
+            --quote-bg: #1a1a1a;
+        }
+
+        body.light-mode {
+            --bg: #fafafa;
+            --bg-card: #ffffff;
+            --bg-elevated: #f5f5f5;
+            --text: #1a1a1a;
+            --text-muted: #666;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --accent-soft: rgba(37, 99, 235, 0.1);
+            --border: #e5e5e5;
+            --quote-bg: #f0f0f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            width: 0%;
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:active { transform: scale(0.95); }
+        body:not(.light-mode) .icon-sun { display: none; }
+        body.light-mode .icon-moon { display: none; }
+
+        /* Back Link */
+        .back-link {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:active { border-color: var(--accent); color: var(--text); }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 20px 60px;
+            position: relative;
+        }
+
+        .lesson-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(38px, 10vw, 56px);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .hero-subtitle {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 340px;
+            line-height: 1.7;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 1px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* Sections */
+        .section {
+            padding: 50px 20px;
+            border-top: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--border);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .section h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 26px;
+            font-weight: 400;
+            margin-bottom: 14px;
+        }
+
+        .section p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .section p.lead {
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        /* Quote Block */
+        .quote-block {
+            background: var(--quote-bg);
+            border-left: 4px solid var(--accent);
+            padding: 18px 18px 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .quote-block.gravity { border-left-color: var(--gravity); }
+        .quote-block.reaction { border-left-color: var(--reaction); }
+
+        .quote-block p {
+            font-family: 'Instrument Serif', serif;
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .quote-block cite {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-style: normal;
+            letter-spacing: 0.5px;
+        }
+
+        /* Wonderland Card */
+        .wonderland-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .wonderland-card .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .wonderland-card h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .wonderland-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Newton's Third Law Card */
+        .newton-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .newton-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .newton-badge {
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .newton-card h4 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 18px;
+        }
+
+        .newton-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+        }
+
+        .building-box {
+            width: 80px;
+            height: 60px;
+            background: var(--bg-card);
+            border: 2px solid var(--text-muted);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .force-arrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .force-arrow.down { color: var(--gravity); }
+        .force-arrow.up { color: var(--reaction); }
+
+        .ground-line {
+            width: 120px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 2px;
+        }
+
+        /* Load Path Diagram */
+        .path-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin: 24px 0;
+        }
+
+        .path-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .path-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .path-step {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .path-step:active, .path-step.active {
+            border-color: var(--path);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .path-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .path-step:nth-child(1) .path-icon { background: rgba(59, 130, 246, 0.2); }
+        .path-step:nth-child(2) .path-icon { background: rgba(34, 197, 94, 0.2); }
+        .path-step:nth-child(3) .path-icon { background: rgba(168, 85, 247, 0.2); }
+        .path-step:nth-child(4) .path-icon { background: rgba(245, 158, 11, 0.2); }
+        .path-step:nth-child(5) .path-icon { background: rgba(107, 114, 128, 0.2); }
+        .path-step:nth-child(6) .path-icon { background: rgba(139, 69, 19, 0.2); }
+
+        .path-text h5 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .path-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .path-arrow {
+            text-align: center;
+            color: var(--path);
+            font-size: 18px;
+            padding: 4px 0;
+        }
+
+        /* Path Info */
+        .path-info {
+            margin-top: 16px;
+            padding: 14px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            border-left: 3px solid var(--path);
+            display: none;
+        }
+
+        .path-info.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .path-info h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+        .path-info p { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.6; }
+
+        /* Load Types Grid */
+        .load-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .load-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .load-card.dead { border-top: 3px solid var(--gravity); }
+        .load-card.live { border-top: 3px solid var(--accent); }
+        .load-card.dynamic { border-top: 3px solid #f59e0b; }
+        .load-card.lateral { border-top: 3px solid #8b5cf6; }
+
+        .load-card .icon { font-size: 28px; margin-bottom: 8px; }
+        .load-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+        .load-card p { font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+        /* Paradox Card */
+        .paradox-card {
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .paradox-card h4 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .paradox-card p { margin-bottom: 0; }
+
+        /* Key Point */
+        .key-point {
+            background: linear-gradient(135deg, var(--accent), #60a5fa);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 24px 0;
+            color: #fff;
+        }
+
+        .key-point h3 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .key-point p {
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Chain Analogy */
+        .chain-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            margin: 24px 0;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .chain-link {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .chain-link.weak {
+            border-color: var(--gravity);
+            color: var(--gravity);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Quiz */
+        .quiz-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .quiz-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+
+        .quiz-option {
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text);
+        }
+
+        .quiz-option:active { transform: scale(0.98); }
+        .quiz-option.correct { border-color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+        .quiz-option.incorrect { border-color: #ef4444; background: rgba(239, 68, 68, 0.15); }
+
+        .quiz-feedback {
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .quiz-feedback.show { display: block; animation: fadeIn 0.3s ease; }
+        .quiz-feedback.correct { background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; color: #22c55e; }
+        .quiz-feedback.incorrect { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; }
+
+        /* Sources */
+        .sources-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .sources-section h4 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .source-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .source-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .source-item:first-of-type { padding-top: 0; }
+
+        .source-icon { font-size: 24px; flex-shrink: 0; }
+
+        .source-info h5 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .source-info p { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+        /* CTA */
+        .cta-section {
+            padding: 50px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .cta-section h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .cta-section p { color: var(--text-muted); margin-bottom: 20px; font-size: 14px; }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--accent);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:active { transform: scale(0.97); }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        footer p { font-size: 11px; color: var(--text-muted); }
+
+        .bottom-safe { height: 50px; }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <a href="session01.html" class="back-link">
+        <span>←</span>
+        <span>Session 01</span>
+    </a>
+
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon-moon">🌙</span>
+        <span class="icon-sun">☀️</span>
+    </button>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="lesson-tag">
+            <span>⬇️</span>
+            <span>10 min read</span>
+        </div>
+        <h1>Load Path<br><span>Concept</span></h1>
+        <p class="hero-subtitle">
+            Every force needs a continuous path to the ground. No gaps. No dead ends.
+        </p>
+        <div class="scroll-hint">
+            <span>Scroll to begin</span>
+            <span>↓</span>
+        </div>
+    </section>
+
+    <!-- Section 1: A World Without Loads -->
+    <section class="section" id="section1">
+        <div class="section-number">01</div>
+        <h2>Why Loads Exist</h2>
+        
+        <p class="lead">
+            Salvadori imagines a world where structure wouldn't be necessary — 
+            and explains why our world is different.
+        </p>
+
+        <div class="quote-block gravity">
+            <p>If the earth did not pull, the wind did not blow, the earth's surface did not shake 
+            or sink, and the air temperature did not change, loads would not exist and structure 
+            would be unnecessary.</p>
+            <cite>— Salvadori, "Why Buildings Stand Up" (1980), p. 43</cite>
+        </div>
+
+        <div class="wonderland-card">
+            <div class="icon">🐇</div>
+            <h3>The Alice-in-Wonderland World</h3>
+            <p>In a fantasy world without gravity, wind, or earthquakes, architects could focus 
+            only on defining space. But in our world, every building must fight these forces constantly.</p>
+        </div>
+
+        <p>
+            This is the fundamental reality: the earth pulls everything down. Structure exists 
+            to redirect that pull safely to the ground.
+        </p>
+
+        <div class="quote-block">
+            <p>Structure supports all the loads that act, unavoidably, on buildings. The engineer's 
+            first job is to determine which loads will act on a structure and how strong they might 
+            be in extreme cases.</p>
+            <cite>— Salvadori, p. 43</cite>
+        </div>
+    </section>
+
+    <!-- Section 2: Newton's Third Law -->
+    <section class="section" id="section2">
+        <div class="section-number">02</div>
+        <h2>Action & Reaction</h2>
+        
+        <p class="lead">
+            Newton's Third Law is the foundation of load path thinking: 
+            every force creates an equal and opposite reaction.
+        </p>
+
+        <div class="newton-card">
+            <div class="newton-header">
+                <span class="newton-badge">Newton's 3rd Law</span>
+            </div>
+            <h4>For every action, there is an equal and opposite reaction</h4>
+            
+            <div class="newton-visual">
+                <div class="force-arrow down">↓ Weight W (Action)</div>
+                <div class="building-box">🏢</div>
+                <div class="ground-line"></div>
+                <div class="force-arrow up">↑ Reaction R (Ground pushes back)</div>
+            </div>
+        </div>
+
+        <div class="quote-block reaction">
+            <p>If a building with a weight W is placed on the ground, we can say that the building 
+            is exerting a downward force of W on the ground. However, for the building to remain 
+            stable on the resisting ground surface without sinking completely, the ground must 
+            resist with an upward force of equal magnitude.</p>
+            <cite>— Onouye & Kane, "Statics and Strength of Materials" (2012), p. 16</cite>
+        </div>
+
+        <p>
+            Think about what this means: if the ground pushed back with less force than the 
+            building's weight, the building would sink. If it pushed with more, the building 
+            would levitate. The ground <em>must</em> react with exactly equal force.
+        </p>
+
+        <div class="key-point">
+            <h3>🎯 For Your Tower</h3>
+            <p>When you place weight on your tower, the table pushes back with equal force. 
+            Your tower is the path between these two forces.</p>
+        </div>
+    </section>
+
+    <!-- Section 3: The Load Path -->
+    <section class="section" id="section3">
+        <div class="section-number">03</div>
+        <h2>Tracing the Path</h2>
+        
+        <p class="lead">
+            Every load must travel through a continuous chain of structural elements 
+            from where it's applied to the ground.
+        </p>
+
+        <div class="path-diagram">
+            <div class="path-title">Gravity Load Path</div>
+            <div class="path-flow">
+                <div class="path-step" data-path="load">
+                    <div class="path-icon">📦</div>
+                    <div class="path-text">
+                        <h5>Applied Load</h5>
+                        <p>People, furniture, equipment</p>
+                    </div>
+                </div>
+                <div class="path-arrow">↓</div>
+                <div class="path-step" data-path="slab">
+                    <div class="path-icon">▬</div>
+                    <div class="path-text">
+                        <h5>Slab / Floor</h5>
+                        <p>Distributes load over area</p>
+                    </div>
+                </div>
+                <div class="path-arrow">↓</div>
+                <div class="path-step" data-path="beam">
+                    <div class="path-icon">━</div>
+                    <div class="path-text">
+                        <h5>Beam</h5>
+                        <p>Collects load, transfers to columns</p>
+                    </div>
+                </div>
+                <div class="path-arrow">↓</div>
+                <div class="path-step" data-path="column">
+                    <div class="path-icon">┃</div>
+                    <div class="path-text">
+                        <h5>Column</h5>
+                        <p>Carries load vertically down</p>
+                    </div>
+                </div>
+                <div class="path-arrow">↓</div>
+                <div class="path-step" data-path="foundation">
+                    <div class="path-icon">▄</div>
+                    <div class="path-text">
+                        <h5>Foundation</h5>
+                        <p>Spreads load over soil</p>
+                    </div>
+                </div>
+                <div class="path-arrow">↓</div>
+                <div class="path-step" data-path="ground">
+                    <div class="path-icon">🌍</div>
+                    <div class="path-text">
+                        <h5>Ground</h5>
+                        <p>Final destination — reaction</p>
+                    </div>
+                </div>
+            </div>
+            <div class="path-info" id="pathInfo">
+                <h4 id="pathTitle">Tap a step</h4>
+                <p id="pathDesc">Select any step in the load path to learn more.</p>
+            </div>
+        </div>
+
+        <p>
+            You should be able to trace this path with your finger from any point on the roof 
+            down to the ground. If there's a gap — a discontinuity — the load has nowhere to go. 
+            That's where failure happens.
+        </p>
+    </section>
+
+    <!-- Section 4: Types of Loads -->
+    <section class="section" id="section4">
+        <div class="section-number">04</div>
+        <h2>What Must Travel This Path?</h2>
+        
+        <p class="lead">
+            Four types of loads, each with different characteristics — 
+            but all must find their way to ground.
+        </p>
+
+        <div class="load-grid">
+            <div class="load-card dead">
+                <div class="icon">🧱</div>
+                <h4>Dead Load</h4>
+                <p>Permanent weight — the structure itself, floors, walls</p>
+            </div>
+            <div class="load-card live">
+                <div class="icon">👥</div>
+                <h4>Live Load</h4>
+                <p>Temporary — people, furniture, stored goods</p>
+            </div>
+            <div class="load-card dynamic">
+                <div class="icon">💨</div>
+                <h4>Dynamic Load</h4>
+                <p>Changing rapidly — wind gusts, impacts</p>
+            </div>
+            <div class="load-card lateral">
+                <div class="icon">🏚️</div>
+                <h4>Lateral Load</h4>
+                <p>Sideways forces — earthquakes, wind pressure</p>
+            </div>
+        </div>
+
+        <div class="quote-block">
+            <p>A structure consists of heavy elements like columns, beams, floors, arches, or domes 
+            which must, first of all, support their own weight, the so-called dead load.</p>
+            <cite>— Salvadori, p. 43</cite>
+        </div>
+
+        <div class="paradox-card">
+            <h4>🤔 The Paradox of Structural Design</h4>
+            <p>To know how strong a beam must be, you need to know its weight. But to know its 
+            weight, you need to know its size. And to know its size, you need to know how strong 
+            it must be. This is why structural design is learned through experience.</p>
+        </div>
+
+        <div class="quote-block">
+            <p>In addition to its dead load, a structure must support a variety of other weights — 
+            people, furniture, equipment, stored goods. These impermanent or live loads may be 
+            shifted around and they may change in value.</p>
+            <cite>— Salvadori, p. 44</cite>
+        </div>
+
+        <p>
+            Salvadori notes that we can never know exactly what the live load is or how it will 
+            be distributed. Building codes establish conservative values based on the worst 
+            conditions expected during a building's entire life.
+        </p>
+    </section>
+
+    <!-- Section 5: The Chain Analogy -->
+    <section class="section" id="section5">
+        <div class="section-number">05</div>
+        <h2>The Weakest Link</h2>
+        
+        <p class="lead">
+            A load path is like a chain — and chains fail at their weakest link.
+        </p>
+
+        <div class="chain-visual">
+            <div class="chain-link">S</div>
+            <div class="chain-link">B</div>
+            <div class="chain-link weak">?</div>
+            <div class="chain-link">C</div>
+            <div class="chain-link">F</div>
+        </div>
+
+        <p>
+            Every connection, every joint, every member in the path must be strong enough 
+            to carry the load. If one element fails — even if everything else is overdesigned — 
+            the entire path breaks.
+        </p>
+
+        <div class="quote-block">
+            <p>Whenever a body A exerts a force on another body B, body B will resist with an 
+            equal magnitude but in the opposite direction.</p>
+            <cite>— Onouye & Kane, p. 16</cite>
+        </div>
+
+        <p>
+            This applies at every connection in your tower. Where one stick meets another, 
+            the forces must transfer completely. A weak joint doesn't just reduce strength — 
+            it creates a gap in the load path.
+        </p>
+
+        <div class="key-point">
+            <h3>🏗️ For Your Tower</h3>
+            <p>Your glue joints are the "links" in your chain. Every connection must transfer 
+            load completely. One weak joint = broken path = failure.</p>
+        </div>
+    </section>
+
+    <!-- Section 6: Quick Check -->
+    <section class="section" id="section6">
+        <div class="section-number">06</div>
+        <h2>Quick Check</h2>
+
+        <div class="quiz-card">
+            <h3>According to Newton's Third Law, what happens when a building pushes down on the ground?</h3>
+            <div class="quiz-options">
+                <button class="quiz-option" data-correct="false" onclick="checkAnswer(this)">
+                    The ground absorbs the force
+                </button>
+                <button class="quiz-option" data-correct="true" onclick="checkAnswer(this)">
+                    The ground pushes back with equal force
+                </button>
+                <button class="quiz-option" data-correct="false" onclick="checkAnswer(this)">
+                    The force disappears into the soil
+                </button>
+                <button class="quiz-option" data-correct="false" onclick="checkAnswer(this)">
+                    The building slowly sinks
+                </button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+    </section>
+
+    <!-- Sources -->
+    <section class="section" id="sources">
+        <div class="sources-section">
+            <h4>📚 Sources</h4>
+            <div class="source-item">
+                <div class="source-icon">📖</div>
+                <div class="source-info">
+                    <h5>Why Buildings Stand Up</h5>
+                    <p>Mario Salvadori • W.W. Norton, 1980 • Ch. 3: "Loads" (pp. 43–58)</p>
+                </div>
+            </div>
+            <div class="source-item">
+                <div class="source-icon">📘</div>
+                <div class="source-info">
+                    <h5>Statics and Strength of Materials</h5>
+                    <p>Onouye & Kane • Pearson, 4th Ed., 2012 • Ch. 2: "Statics" (pp. 15–25)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Ready to Continue?</h2>
+        <p>Next: Connections Matter — why joints are where structures fail.</p>
+        <a href="session01.html" class="cta-button">
+            <span>Back to Session 01</span>
+            <span>→</span>
+        </a>
+    </section>
+
+    <footer>
+        <p>ARQ216 — Module 1: Tower Olympiad<br>Universidad Iberoamericana Tijuana — Primavera 2026</p>
+    </footer>
+
+    <div class="bottom-safe"></div>
+
+    <script>
+        const pathData = {
+            load: {
+                title: 'Applied Load',
+                desc: 'This is where the load path begins — people standing on a floor, furniture, equipment. In your tower competition, this is the weight we stack on top.'
+            },
+            slab: {
+                title: 'Slab / Floor',
+                desc: 'The slab distributes concentrated loads (like a person\'s feet) over a larger area and transfers them to the beams below. Think of it as the first collector.'
+            },
+            beam: {
+                title: 'Beam',
+                desc: 'Beams span horizontally, collecting loads from the slab and channeling them to specific points — the columns. They work in bending.'
+            },
+            column: {
+                title: 'Column',
+                desc: 'Columns carry loads straight down through compression. They\'re the vertical highways of the load path. In your tower, the vertical sticks are your columns.'
+            },
+            foundation: {
+                title: 'Foundation',
+                desc: 'The foundation spreads the concentrated column loads over a larger area of soil. Without it, the columns would punch through like stiletto heels on soft ground.'
+            },
+            ground: {
+                title: 'Ground',
+                desc: 'The final destination. Newton\'s Third Law says the ground must push back with exactly equal force. This reaction is what actually holds the building up.'
+            }
+        };
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', isLight ? '#fafafa' : '#0d0d0d');
+        }
+
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute('content', '#fafafa');
+            }
+        })();
+
+        window.addEventListener('scroll', () => {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / docHeight) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        const sections = document.querySelectorAll('.section');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+        sections.forEach(section => sectionObserver.observe(section));
+
+        // Load Path Interaction
+        const pathSteps = document.querySelectorAll('.path-step');
+        const pathInfo = document.getElementById('pathInfo');
+        const pathTitle = document.getElementById('pathTitle');
+        const pathDesc = document.getElementById('pathDesc');
+
+        pathSteps.forEach(step => {
+            step.addEventListener('click', () => {
+                const key = step.dataset.path;
+                const data = pathData[key];
+                if (data) {
+                    pathTitle.textContent = data.title;
+                    pathDesc.textContent = data.desc;
+                    pathInfo.classList.add('visible');
+                }
+                pathSteps.forEach(s => s.classList.remove('active'));
+                step.classList.add('active');
+            });
+        });
+
+        function checkAnswer(button) {
+            const isCorrect = button.dataset.correct === 'true';
+            const feedback = document.getElementById('quizFeedback');
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.correct === 'true') opt.classList.add('correct');
+                else if (opt === button && !isCorrect) opt.classList.add('incorrect');
+            });
+            feedback.classList.add('show');
+            if (isCorrect) {
+                feedback.classList.add('correct');
+                feedback.classList.remove('incorrect');
+                feedback.textContent = '✓ Correct! Newton\'s Third Law: the ground must resist with an upward force of equal magnitude. If it didn\'t, the building would sink or levitate.';
+            } else {
+                feedback.classList.add('incorrect');
+                feedback.classList.remove('correct');
+                feedback.textContent = '✗ Not quite. The ground must push back with exactly equal force — that\'s Newton\'s Third Law. The building stays stable because action equals reaction.';
+            }
+        }
+
+        document.querySelectorAll('button, a, .path-step, .quiz-option').forEach(el => {
+            el.addEventListener('touchend', e => {
+                if (el.tagName === 'A' && el.href) return;
+                e.preventDefault();
+                el.click();
+            });
+        });
+    </script>
+</body>
+</html>
